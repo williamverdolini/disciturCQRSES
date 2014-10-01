@@ -1,0 +1,218 @@
+﻿angular.module('disc.lesson')
+    .controller('LessonCtrl', [
+        '$scope',
+        'LabelService',
+        'LessonService',
+        '$sce',
+        'lessonData',
+        '$rootScope',
+        'AuthService',
+        'CommentDTO',
+        'DisciturBaseCtrl',
+        '$injector',
+        function (
+            $scope,
+            LabelService,
+            LessonService,
+            $sce,
+            lessonData,
+            $rootScope,
+            AuthService,
+            CommentDTO,
+            DisciturBaseCtrl,
+            $injector
+            ) {
+            // inherit Discitur Base Controller
+            $injector.invoke(DisciturBaseCtrl, this, { $scope: $scope });
+
+            //-------- private properties -------
+            $scope._ctrl = 'LessonCtrl';
+
+            //-------- private methods-------
+            /*
+            var _getLabel = function (label) {
+                return LabelService.get('LessonCtrl', label);
+            }
+            */
+            //-------- public properties-------
+            $scope.labels = {
+                specifics: $scope.getLabel('specifics'),
+                discipline: $scope.getLabel('discipline'),
+                school: $scope.getLabel('school'),
+                classroom: $scope.getLabel('classroom'),
+                author: $scope.getLabel('author'),
+                publishedOn: $scope.getLabel('publishedOn'),
+                rating: $scope.getLabel('rating'),
+                content: $scope.getLabel('content'),
+                lessonGoods: $scope.getLabel('lessonGoods'),
+                noLessonGoods: $scope.getLabel('noLessonGoods'),
+                lessonBads: $scope.getLabel('lessonBads'),
+                noLessonBads: $scope.getLabel('noLessonBads'),
+                conclusion: $scope.getLabel('conclusion'),
+                comments: $scope.getLabel('comments'),
+                ratings: $scope.getLabel('ratings'),
+                ratingtHelp: $scope.getLabel('ratingtHelp'),
+                notPublished: $scope.getLabel('notPublished')                
+            };
+
+            //$rootScope.labels.appTitle = $scope.getLabel('appTitle') + ' ' + lessonData.title
+            $scope._actions.setTitle(lessonData.title);
+
+            $scope.local = {
+                commentText: null,
+                commentError : null,
+                commentTexts: [],
+                commentErrors: [],
+                user: {
+                    isLogged: false,
+                    userId: false
+                }
+            }
+
+            //-------- public methods -------
+            $scope.actions = {
+                /*
+                openSignIn: function () {
+                    $rootScope.$broadcast('disc.login', $scope.actions)
+                },
+                ok: function () {
+                    //$scope.local.commentText = 'Inserisci il tuo commento'
+                    //$scope.local.UserCommentForm.CommentTXT.focus();
+                },
+                */
+                // save User Comment
+                saveComment: function (comment) {
+                    // retrieve current form
+                    var localForm = comment ? $scope.local['UserCommentFormOn' + comment.id] : $scope.local.UserCommentForm;
+                    var localTxtArea = localForm.CommentTXT;
+                    // check for validation error
+                    if (localTxtArea.$valid) {
+                        var _comment = new CommentDTO();
+                        _comment.lessonId = $scope.lesson.lessonId;
+                        _comment.content = localTxtArea.$modelValue;
+                        //_comment.date = new Date();
+                        _comment.parentId = comment ? comment.id : null;
+                        _comment.level = comment ? comment.level + 1 : 0;
+                        _comment.author.userid = AuthService.user.userid;
+                        LessonService.saveComment(_comment, $scope.lesson.comments)
+                            .then(function (savedComment) {
+                                $scope.lesson.comments.push(savedComment);
+                                // Reset Aswer textarea
+                                if (comment) {
+                                    comment.anwser = false;
+                                    $scope.local.commentTexts[comment.id] = "";
+                                }
+                                else {
+                                    $scope.local.commentText = "";
+                                }
+                            })
+                    }
+                },
+                // Add the new User Comment to Lesson's Comments array
+                addComment: function (comment) {
+                    $scope.lesson.comments.push(
+                        LessonService.setCommentPrivates(comment, $scope.lesson.comments)
+                        );
+                },
+                // Remove the User Comment from Lesson's Comments array
+                deleteComment: function (comment) {
+                    var index = -1;
+                    for (var i = 0; i < $scope.lesson.comments.length; i++) {
+                        if ($scope.lesson.comments[i].id === comment.id)
+                            index = i;
+                    }
+                    if(index>-1)
+                        $scope.lesson.comments.splice(index, 1);
+                },
+                // check for authentication and open/close user comment textarea
+                openUserComment: function (comment) {
+                    if (!$scope.isLogged) {
+                        !$scope.actions.openSignIn();
+                    }
+                    comment.anwser = !comment.anwser;
+                },
+                // check if exists user's rating
+                userHasVoted : function(){
+                    for (var i = 0; i < $scope.lesson.ratings.length; i++) {
+                        if ($scope.lesson.ratings[i].author.userid === AuthService.user.userid)
+                            return true;
+                    }
+                    return false;
+                },
+                // Add the new User Rating to Lesson's Comments array
+                addRating: function (rating) {
+                    $scope.lesson.ratings.push(rating);
+                },
+                // Remove the User Comment from Lesson's Comments array
+                deleteRating: function (rating) {
+                    var index = -1;
+                    for (var i = 0; i < $scope.lesson.ratings.length; i++) {
+                        if ($scope.lesson.ratings[i].id === rating.id)
+                            index = i;
+                    }
+                    if (index > -1)
+                        $scope.lesson.ratings.splice(index, 1);
+                }
+            }
+
+            //-------- Controller Initialization -------
+            $scope.isLogged = AuthService.user.isLogged
+            $scope.local.user.isLogged = AuthService.user.isLogged;
+            $scope.local.user.userId = AuthService.user.userid;
+            $scope.$watch(function () {
+                return AuthService.user.isLogged;
+            },
+                function () {
+                    $scope.isLogged = AuthService.user.isLogged;
+                    $scope.local.user.isLogged = AuthService.user.isLogged;
+                    $scope.local.user.userId = AuthService.user.userid;
+                }
+            );
+
+            /***** model initialization ****/
+            // lesson data async
+            var currentLesson = lessonData;
+            $scope.lesson = currentLesson;
+            //$scope.lesson.content = $sce.trustAsHtml(currentLesson.content);
+            // Users Comments
+            $scope.lesson.comments = [];
+            LessonService.getComments({ id: $scope.lesson.lessonId })
+                .then(function (comments) { $scope.lesson.comments = comments; }) // success
+            // Users Ratings
+            $scope.lesson.ratings = [];
+            LessonService.getRatings({ id: $scope.lesson.lessonId })
+                .then(function (ratings) { $scope.lesson.ratings = ratings; }) // success
+
+
+            //var _watchers = null;
+
+            /*
+            var _detachStaticWatchers = $scope.$watch(function () {
+                // first digest cycle: find static watchers
+                if (_watchers == null) {
+                    _watchers = [];
+                    var _reLabels = /^{{labels\.\w+}}$/
+                    for (var i = $scope.$$watchers.length - 1; i >= 0; i--) {
+                        console.log($scope.$$watchers[i].exp.exp)
+                        if ($scope.$$watchers[i].exp &&
+                            $scope.$$watchers[i].exp.exp &&
+                            _reLabels.test($scope.$$watchers[i].exp.exp)) {
+                            _watchers.push(i);
+                        }
+                    }
+                }
+                    // second digest cycle: remove static watchers
+                else {
+                    for (var i = 0; i < _watchers.length; i++) {
+                        console.log($scope.$$watchers[_watchers[i]]);
+                        $scope.$$watchers.splice(_watchers[i], 1);
+                    }
+                    _detachStaticWatchers();
+                }
+                console.log($scope.$$watchers);
+            })
+            */
+
+
+        }
+    ]);

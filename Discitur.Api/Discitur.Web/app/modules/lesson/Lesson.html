@@ -1,0 +1,139 @@
+﻿<!-- Lesson's Heading Area -->
+<div id="LessonHeading" class="jumbotron">
+
+    <input type="hidden" name="lesson.id" value="{{lesson.lessonId}}" />
+    <h1>{{lesson.title}} <small ng-show="!lesson.isPublished" tooltip="{{labels.notPublished}}" tooltip-placement="bottom">(<span class="glyphicon glyphicon-lock"></span>)</small></h1>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="Lesson-Features col-md-12">
+                <span>{{labels.specifics}}</span>
+                <social-bar css-class="social-bar" url-title="{{lesson.title}}"></social-bar>
+            </div>
+            <!--<span class="Lesson-Features col-md-12">{{labels.specifics}}</span>-->
+            <h4>
+                <dl class="dl-horizontal">
+                <dt>{{labels.discipline}} :</dt>
+                <dd>{{lesson.discipline}}</dd>
+                <dt>{{labels.school}} :</dt>
+                <dd>{{lesson.school}}</dd>
+                <dt>{{labels.classroom}} :</dt>
+                <dd>{{lesson.classroom}}</dd>
+                <dt>{{labels.author}} :</dt>
+                <dd><a><span tooltip-html-unsafe="{{lesson.author.name}}<br>{{lesson.author.surname}}">{{lesson.author.name + " " + lesson.author.surname}}</span></a></dd>
+                <dt>{{labels.publishedOn}} :</dt>
+                <dd>{{lesson.publishedOn | date:'dd/MM/yyyy'}}</dd>
+                <dt>{{labels.rating}} :</dt>
+                <dd><rating value="lesson.rate" readonly="true"></rating><span class="label label-info">{{lesson.rate}}</span></dd>
+                </dl>
+            </h4>
+        </div>
+    </div>
+    <div class="row">
+        <span ng-repeat="tag in lesson.tags">
+            <button type="button" class="btn btn-success btn-sm disabled" disabled="disabled">{{tag.content}}</button>
+        </span>
+    </div>
+</div>
+
+
+
+<!-- Lesson's Content Area -->
+<div id="LessonContent" class="row">
+    <div class="col-md-12">
+        <div class="panel panel-default">                
+            <div class="panel-body"><h2>{{labels.content}}</h2></div>
+            <div class="panel-body" ng-bind-html="lesson.content"></div>
+        </div>
+    </div>
+</div>
+<!-- Lesson's Feedbacks Area -->
+<div id="LessonSummary" class="row">
+    <div id="lessonGoods" class="col-md-6" ng-switch="lesson.goods && lesson.goods.length>0">
+        <div class="panel panel-info">
+            <div class="panel-heading"><h3>{{labels.lessonGoods}}</h3></div>
+            <div class="panel-body">
+                <ol ng-switch-when="true">
+                    <li ng-repeat="item in lesson.goods">{{item.content}}</li>
+                </ol>
+                <div ng-switch-when="false">{{labels.noLessonGoods}}</div>
+            </div>
+        </div>
+    </div>
+    <div id="lessonBads" class="col-md-6" ng-switch="lesson.bads && lesson.bads.length>0">
+        <div class="panel panel-warning">
+            <div class="panel-heading"><h3>{{labels.lessonBads}}</h3></div>
+            <div class="panel-body">
+                <ol ng-switch-when="true">
+                    <li ng-repeat="item in lesson.bads">{{item.content}}</li>
+                </ol>
+                <div ng-switch-when="false">{{labels.noLessonBads}}</div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Conclusion Area -->
+<div id="Conclusion" class="lead row">
+    <div class="col-md-12">
+        <div class="panel panel-default">
+            <div class="panel-body"><h2>{{labels.conclusion}}</h2></div>
+            <div class="panel-body" ng-bind-html="lesson.conclusion"></div>
+        </div>
+    </div>
+</div>
+<!-- Social Area -->
+<div class="row">
+    <div class="col-md-12">
+        <tabset justified="true" class="panel">
+            <!-- Users Comments Area -->
+            <tab heading="{{labels.comments}}" class="h2">
+                <div class="panel"> <!-- add class panel-default for bordering-->
+                    <div class="panel-body">
+                        <!-- Comment History Area -->
+                        <div class="row" ng-repeat-start="comment in lesson.comments | orderBy:['_order']:false">
+                            <lesson-comment comment="comment" lesson-id="{{lesson.lessonId}}" add-comment="actions.addComment(comment)" delete-comment="actions.deleteComment(comment)" abs-url="{{absUrl}}"></lesson-comment>
+                        </div>
+                        <hr ng-repeat-end class="comment-hr" />
+                        <!-- New Comment Area -->
+                        <div class="row">
+                            <!--<lesson-comment></lesson-comment>-->
+                            <lesson-comment lesson-id="{{lesson.lessonId}}" add-comment="actions.addComment(comment)"></lesson-comment>
+                        </div>
+                    </div>
+                </div>
+            </tab>
+            <!-- Users Ratings Area -->
+            <tab heading="{{labels.ratings}}" class="h2">
+                <div class="panel-body">
+                    <!-- Rating Access/Help Area -->
+                    <div class="row" ng-show="!local.user.isLogged">
+                        <label class="bs-callout bs-callout-info col-lg-12" do-sign-in>{{labels.ratingtHelp}}</label> <!--ng-click="actions.openSignIn()"-->
+                    </div>
+                    <!-- User Rating Area -->
+                    <div class="row" ng-show="local.user.isLogged && !actions.userHasVoted()">
+                        <lesson-rating lesson-id="{{lesson.lessonId}}" add-rating="actions.addRating(rating)" delete-rating="actions.deleteRating(rating)"></lesson-rating>
+                    </div>
+                    <!-- Users Rating History Area -->
+                    <div class="row" ng-repeat-start="rating in lesson.ratings | orderBy:[date]">
+                        <lesson-rating user-rating="rating" lesson-id="{{rating.lessonId}}" add-rating="actions.addRating(rating)" delete-rating="actions.deleteRating(rating)"></lesson-rating>
+                    </div>
+                    <hr ng-repeat-end class="comment-hr" />
+                </div>
+
+            </tab>
+        </tabset>
+    </div>
+
+    <!-- Lesson's Content Area -->
+    <div class="col-md-12">
+        <!--
+        <a href="https://twitter.com/share" data-url="{{absUrl}}" class="twitter-share-button" data-via="__wilver__">Tweet</a>
+        <a class="fb-share-button" data-href="{{absUrl}}" data-type="button_count"></a>
+        <div class="g-plusone" data-size="medium" data-href="{{absUrl}}"></div>
+
+        <a href="https://twitter.com/share" data-url="{{absUrl}}" class="btn btn-twitter" data-via="__wilver__"><i class="fa fa-twitter"></i></a>
+        -->
+
+    </div>
+
+
+</div>

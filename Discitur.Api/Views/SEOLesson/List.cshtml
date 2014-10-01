@@ -1,0 +1,13 @@
+﻿@model IEnumerable<Discitur.QueryStack.Model.Lesson>
+
+    @{
+        ViewBag.Title = "List";
+    }
+
+    <h2>List</h2>
+    <ul>
+        @foreach (var item in Model)
+        {
+            <li>@Html.ActionLink(item.Title, "Detail", new { id = item.LessonId })</li>
+        }
+    </ul>

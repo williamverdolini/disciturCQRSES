@@ -1,0 +1,31 @@
+﻿@model Discitur.QueryStack.Model.Lesson
+
+@{
+    ViewBag.Title = Model.Title;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>@Html.Raw(Model.Title)</h2>
+
+<h3>Caratteristiche</h3>
+<ul>
+    @foreach (var item in Model.Tags)
+    {
+        <li>@Html.Raw(item.LessonTagName)</li>
+    }
+</ul>
+
+<h3>Contenuto</h3>
+<p>@Html.Raw(Model.Content)</p>
+
+<h3>Conclusioni</h3>
+<p>@Html.Raw(Model.Conclusion)</p>
+
+
+<h3>Feedback</h3>
+<ul>
+    @foreach (var item in Model.FeedBacks)
+    {
+        <li>@Html.Raw(item.Feedback) [@Html.Raw(item.Nature==1?"Positivo":"Negativo")]</li>
+    }
+</ul>

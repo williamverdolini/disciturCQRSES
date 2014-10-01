@@ -1,0 +1,34 @@
+﻿<div class="row" ng-repeat="lesson in lessons">
+    <div>
+        <h2>
+            {{lesson.title}} <small ng-show="!lesson.isPublished" tooltip="{{labels.notPublished}}" tooltip-placement="bottom">(<span class="glyphicon glyphicon-lock"></span>)</small>
+            <h4><rating value="lesson.rate" readonly="true"></rating><span class="label label-info">{{lesson.rate}}</span></h4>
+            <h4><small>{{lesson.author.name}} {{lesson.author.surname}} - {{labels.publishedOn}}: {{lesson.publishedOn | date}}</small></h4>
+        </h2>
+    </div>
+    <div class="row">
+        <div class="col-md-8">
+            <div>
+                <p ng-bind-html="lesson.conclusion"></p>
+                <!--<p><a class="btn btn-default" ng-href="#/lesson/{{lesson.lessonId}}/{{lesson.title | beautyURL}}">{{labels.viewMore}}</a></p>-->
+                <p><a class="btn btn-default" ui-sref="lessonDetail({ lessonId: lesson.lessonId, title: filter('beautyURL')(lesson.title)})">{{labels.viewMore}}</a></p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="no-margin bs-callout bs-callout-info">
+                    <h5><b>{{lesson.discipline}}</b></h5>
+                    <h5><b>{{lesson.school}}</b></h5>
+                    <h5><b>{{lesson.classroom}}</b></h5>
+            </div>
+        </div>
+    </div>
+    <hr ng-hide="($index+1)==lessons.length" />
+</div>
+<div class="row">
+    <div class="col-md-12" ng-show="totalLessons==0">
+        <h4>{{labels.noLessonFound}}</h4>
+    </div>
+    <div class="col-md-8" ng-hide="totalLessons<=pageSize">
+        <pager total-items="totalLessons" page="currentPage" items-per-page="pageSize" on-select-page="getPage({ pageNum: page })" previous-text="<" next-text=">"></pager>
+    </div>
+</div>

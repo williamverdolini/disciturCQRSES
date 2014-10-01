@@ -1,0 +1,10 @@
+bin
+obj
+Discitur.Api/Discitur.Web/app/bower_components/
+packages/
+Discitur.Api/Discitur.Web/app/data/
+Discitur.Api/Discitur.Web/app/assets/
+Discitur.Api/Discitur.Web/app/deploy/
+*.user
+*.suo
+Discitur.Api/Web.reserved.config

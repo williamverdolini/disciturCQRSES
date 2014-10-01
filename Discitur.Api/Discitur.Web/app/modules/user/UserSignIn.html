@@ -1,0 +1,148 @@
+﻿<script type="text/ng-template" id="UserSignIn">
+    <div class="modal-header">
+        <button type="button" ng-click="actions.cancel()" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h3 class="modal-title">{{labels.signInTitle}}</h3>
+    </div>
+    <div class="modal-body">
+
+        <div class="row">
+            <!-- Login Panel -->
+            <div class="col-md-6">
+                <div class="panel panel-default">
+                    <div class="panel-heading"><h3 class="panel-title">{{labels.login}}</h3></div>
+                    <div class="panel-body">
+                        <form class="form-horizontal" name="local.LoginForm" ng-submit="actions.doLogin()" novalidate>
+                            <div class="form-group">
+                                <label class="col-sm-5 control-label">{{labels.username}}</label>
+                                <div class="col-sm-7">
+                                    <input class="form-control input-sm" type="text" ng-minlength="4" name="username" ng-model="local.username" required>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="col-sm-5 control-label">{{labels.password}}</label>
+                                <div class="col-sm-7">
+                                    <input class="form-control input-sm" type="password" ng-minlength="7" name="password" ng-model="local.password" required>
+                                </div>
+                            </div>
+                            <div class="bs-callout bs-callout-danger" ng-show="local.errors.show">
+                                <button type="button" class="close" ng-click="local.errors.show=false">&times;</button>
+                                <div ng-bind-html="local.errors.message"></div>
+                            </div>
+
+
+                            <div class="form-group">
+                                <div class="col-sm-12">
+                                    <div class="control-group pull-right">
+                                        <a ng-click="actions.showRetrievePwd()" style="padding-right:5px">{{labels.forgottenPassword}}</a>
+                                        <button class="btn btn-primary" type="submit">{{labels.loginButtom}}</button>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </form>
+                        <form name="local.ForgottenPwd" novalidate ng-show="local.showForgottedPwd">
+                            <div class="bs-callout bs-callout-info">{{labels.forgottenPwdHelp}}</div>
+                            <div class="form-group ">
+                                <div class="col-sm-12 input-group">
+
+                                    <input type="text" name="username" class="form-control input-sm" placeholder="{{labels.username}}" required ng-minlength="4" ng-model="local.usernamePwd">
+                                    <div class="input-group-btn btn-group-sm">
+                                        <button class="btn btn-default" ng-click="actions.retrievePassword()">{{labels.sendMail}}</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="bs-callout bs-callout-danger" ng-show="local.errorsPwd.show">
+                                <button type="button" class="close" ng-click="local.errorsPwd.show=false">&times;</button>
+                                <div ng-bind-html="local.errorsPwd.message"></div>
+                            </div>
+                            <div class="bs-callout bs-callout-info" ng-show="local.sentNewPwd.show">
+                                <button type="button" class="close" ng-click="local.sentNewPwd.show=false">&times;</button>
+                                <div ng-bind-html="local.sentNewPwd.message"></div>
+                            </div>
+
+                        </form>
+
+                    </div>
+                </div>
+            </div>
+            <!-- Registration Panel -->
+            <div class="col-md-6">
+                <div class="panel panel-default">
+                    <div class="panel-heading"><h3 class="panel-title">{{labels.register}}</h3></div>
+                    <div class="panel-body">
+                        <form class="form-horizontal" name="local.SignupForm" ng-submit="actions.doSignup()" novalidate>
+                            <div class="form-group">
+                                <label class="col-sm-5 control-label">{{labels.name}}</label>
+                                <div class="col-sm-7">
+                                    <input class="form-control input-sm" type="text" name="name" ng-model="local.SUname" required>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-5 control-label">{{labels.surname}}</label>
+                                <div class="col-sm-7">
+                                    <input class="form-control input-sm" type="text" name="surname" ng-model="local.SUsurname" required>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-5 control-label">{{labels.email}}</label>
+                                <div class="col-sm-7">
+                                    <input class="form-control input-sm" type="email" name="email" ng-model="local.SUemail" required > <!--server-validation="actions.checkEmail(inputValue)"-->
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-5 control-label">{{labels.username}}</label>
+                                <div class="col-sm-7">
+                                    <input class="form-control input-sm" type="text" name="username" ng-minlength="4" ng-model="local.SUusername" required>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="col-sm-5 control-label">{{labels.password}}</label>
+                                <div class="col-sm-7">
+                                    <input class="form-control input-sm" type="password" name="password" ng-minlength="7" ng-model="local.SUpassword" required>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-5 control-label">{{labels.confirmPassword}}</label>
+                                <div class="col-sm-7">
+                                    <input class="form-control input-sm" type="password" name="confirmPassword" ng-minlength="7" ng-model="local.SUconfirmpassword" pw-check="local.SUpassword" required>
+                                </div>
+                            </div>
+
+                            <div class="bs-callout bs-callout-danger" ng-show="local.SUerrors.show">
+                                <button type="button" class="close" ng-click="local.SUerrors.show=false">&times;</button>
+                                <div ng-bind-html="local.SUerrors.message"></div>
+                            </div>
+                            <!--
+                            <button class="btn btn-primary pull-right" type="submit">{{labels.signupButton}}</button>
+                            -->
+                            <div class="form-group">
+                                <div class="col-sm-12">
+                                    <div class="control-group pull-right">
+                                        <button class="btn btn-primary" type="submit">{{labels.signupButton}}</button>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                        </form>
+
+                        <div class="form">
+                            <div class="bs-callout bs-callout-info" ng-show="local.SUSuccess.show">
+                                <button type="button" class="close" ng-click="local.SUSuccess.show=false">&times;</button>
+                                <div ng-bind-html="labels.signupSuccess"></div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <!--
+    <div class="modal-footer">
+    </div>
+        -->
+</script>

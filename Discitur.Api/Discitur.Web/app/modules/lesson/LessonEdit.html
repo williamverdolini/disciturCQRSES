@@ -1,0 +1,364 @@
+﻿<style>
+
+    .helprow {
+        border-right: 1px solid #808080;
+        -moz-border-radius: 4px; /*add some nice CSS3 round corners*/
+        -webkit-border-radius: 4px;
+        margin-bottom: 1px;
+    }
+    
+    .uparrowdiv, .downarrowdiv, .leftarrowdiv, .rightarrowdiv {
+        min-height: 40px; /*min height of DIV should be set to at least 2x the width of the arrow*/
+        padding: 5px;
+        position: relative;
+        word-wrap: break-word;
+        -moz-border-radius: 5px; /*add some nice CSS3 round corners*/
+        -webkit-border-radius: 5px;
+        border-radius: 5px;
+    }
+
+        .rightarrowdiv:after { /*arrow added to rightarrowdiv DIV*/
+            content: '';
+            display: block;
+            position: absolute;
+            top: 40%;
+            left: 100%; /*should be set to 100% */
+            width: 0;
+            height: 0;
+            border-color: transparent transparent transparent #808080; /*border color should be same as div div background color*/
+            border-style: solid;
+            border-width: 10px;
+        }
+
+</style>
+
+<form class="bs-example form-horizontal" name="local.editForm" ng-submit="actions.saveLesson()" novalidate>
+
+    <div class="row">
+        <div class="col-md-3" >
+            <!-- LESSON TITLE HELP AREA - BEGIN -->
+            <fieldset ng-show="local.viewHelp">
+                <legend>Help&nbsp;</legend>
+                <div class="row helprow">
+                    <div class="rightarrowdiv" ng-bind-html="labels.helpTitle"></div>
+                </div>
+            </fieldset>
+            <!-- LESSON TITLE HELP AREA - END -->
+        </div>
+        <div class="col-md-9">
+            <!-- LESSON TITLE AREA - BEGIN -->
+            <fieldset>
+                <legend>{{labels.lessonTitleHeading}} <a ng-click="actions.showHideHelp()"><span class="glyphicon glyphicon-question-sign pull-right" tooltip="{{labels.showHideHelp}}" tooltip-placement="left"></span></a></legend>
+                <div class="form-group">
+                    <label for="inputTitle" class="col-lg-2 control-label">{{labels.lessonTitle}}</label>
+                    <div class="col-lg-10">
+                        <input type="text" class="form-control" id="inputTitle" name="title" placeholder="{{labels.lessonTitle}}" ng-model="local.lesson.title" ng-required="true">
+                        <input type="button" class="btn btn-danger btn-xs" ng-show="local.isFieldRequired('title')" disabled value="{{labels.requiredField}}" />
+
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="inputPublish" class="col-lg-2 control-label">{{labels.publicLesson}}</label>
+                    <div class="controls col-lg-10">
+                        <label class="checkbox">
+                            <input type="checkbox" ng-model="local.lesson.isPublished">
+                        </label>
+                    </div>
+                </div>
+            </fieldset>
+            <!-- LESSON TITLE AREA - END -->
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-3">
+            <!-- LESSON SPECIFICS HELP AREA - BEGIN -->
+            <fieldset ng-show="local.viewHelp">
+                <legend style="border-bottom:0px;">&nbsp;</legend>
+                <div class="row helprow">
+                    <div class="rightarrowdiv" ng-bind-html="labels.helpSpecifics"></div>
+                </div>
+            </fieldset>
+            <!-- LESSON SPECIFICS HELP AREA - END -->
+        </div>
+        <div class="col-md-9">
+            <!-- LESSON SPECIFICS AREA - BEGIN -->
+            <fieldset>
+                <legend>{{labels.specifics}}</legend>
+                <div class="form-group">
+                    <label for="inputDiscipline" class="col-lg-2 control-label">{{labels.discipline}}</label>
+                    <div class="col-lg-10">
+                        <input type="text" class="form-control"
+                               id="inputDiscipline"
+                               name="discipline"
+                               placeholder="{{labels.discipline}}"
+                               ng-model="local.lesson.discipline"
+                               typeahead-wait-ms="300"
+                               typeahead="k for k in actions.getDisciplines($viewValue) | filter:$viewValue"
+                               ng-required="true">
+                        <input type="button" class="btn btn-danger btn-xs" ng-show="local.isFieldRequired('discipline')" disabled value="{{labels.requiredField}}" />
+                    </div>
+
+                </div>
+                <div class="form-group">
+                    <label for="inputSchool" class="col-lg-2 control-label">{{labels.school}}</label>
+                    <div class="col-lg-10">
+                        <input type="text" class="form-control"
+                               id="inputSchool"
+                               name="school"
+                               placeholder="{{labels.school}}"
+                               ng-model="local.lesson.school"
+                               typeahead-wait-ms="300"
+                               typeahead="k for k in actions.getSchools($viewValue) | filter:$viewValue"
+                               ng-required="true">
+                        <input type="button" class="btn btn-danger btn-xs" ng-show="local.isFieldRequired('school')" disabled value="{{labels.requiredField}}" />
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="inputClassroom" class="col-lg-2 control-label">{{labels.classroom}}</label>
+                    <div class="col-lg-10">
+                        <input type="text" class="form-control"
+                               id="inputClassroom"
+                               name="classroom"
+                               placeholder="{{labels.classroom}}"
+                               ng-model="local.lesson.classroom"
+                               typeahead-wait-ms="300"
+                               typeahead="k for k in actions.getClassRooms($viewValue) | filter:$viewValue"
+                               ng-required="true">
+                        <input type="button" class="btn btn-danger btn-xs" ng-show="local.isFieldRequired('classroom')" disabled value="{{labels.requiredField}}" />
+                    </div>
+                </div>
+            </fieldset>
+            <!-- LESSON SPECIFICS AREA - END -->
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-3">
+            <!-- LESSON TAGS HELP AREA - BEGIN -->
+            <fieldset ng-show="local.viewHelp">
+                <legend style="border-bottom:0px;">&nbsp;</legend>
+                <div class="row helprow">
+                    <div class="rightarrowdiv" ng-bind-html="labels.helpTags"></div>
+                </div>
+            </fieldset>
+            <!-- LESSON TAGS HELP AREA - END -->
+        </div>
+        <div class="col-md-9">
+            <!-- LESSON TAGS AREA - BEGIN -->
+            <fieldset>
+                <legend>{{labels.tags}}</legend>
+
+                <div class="form-group">
+                    <label class="col-lg-2 control-label">{{labels.tags}}</label>
+                    <div class="col-lg-10">
+                        <div class="input-group">
+                            <input class="form-control" type="text"
+                                   ng-model="local.tag"
+                                   typeahead-wait-ms="300"
+                                   typeahead="k for k in actions.getTags($viewValue) | filter:$viewValue"
+                                   typeahead-on-select="actions.selectTag()">
+                            <span class="input-group-btn">
+                                <button class="btn btn-default" ng-click="actions.selectTag()" type="button" tooltip="{{labels.addItem}}">{{labels.buttonAdd}}</button>
+                            </span>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="form-group">
+                    <div class="col-lg-10 col-lg-offset-2">
+                        <span ng-repeat="tag in local.lesson.tags | filter:actions.filterByActiveStatus">
+                            <div class="btn-group">
+                                <button type="button" class="btn btn-success" disabled="disabled">
+                                    {{tag.content}}
+                                </button>
+                                <button type="button" class="btn btn-default" ng-click="actions.removeTag($index)">{{labels.buttonDel}}</button>
+
+                            </div>
+                        </span>
+                    </div>
+                </div>
+
+
+            </fieldset>
+            <!-- LESSON TAGS AREA - END -->
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-3">
+            <!-- LESSON CONTENT HELP AREA - BEGIN -->
+            <fieldset ng-show="local.viewHelp">
+                <legend style="border-bottom:0px;">&nbsp;</legend>
+                <div class="row helprow">
+                    <div class="rightarrowdiv" ng-bind-html="labels.helpContent"></div>
+                </div>
+            </fieldset>
+            <!-- LESSON CONTENT HELP AREA - END -->
+        </div>
+        <div class="col-md-9">
+            <!-- LESSON CONTENT AREA - BEGIN -->
+            <fieldset>
+                <legend>{{labels.content}}</legend>
+                <div class="form-group">
+                    <div class="col-lg-12">
+                        <textarea type="textarea" 
+                                  class="form-control" 
+                                  id="inputContent" 
+                                  name="content"
+                                  ui-tinymce="model.tinymceoptions" 
+                                  ng-model="local.lesson.content" 
+                                  rows="20" 
+                                  ng-required="true"></textarea>
+                        <input type="button" class="btn btn-danger btn-xs" ng-show="local.isFieldRequired('content')" disabled value="{{labels.requiredField}}" />
+                    </div>
+                </div>
+            </fieldset>
+            <!-- LESSON CONTENT AREA - END -->
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-3">
+            <!-- LESSON FEEDBACKS HELP AREA - BEGIN -->
+            <fieldset ng-show="local.viewHelp">
+                <legend style="border-bottom:0px;">&nbsp;</legend>
+                <div class="row helprow">
+                    <div class="rightarrowdiv" ng-bind-html="labels.helpFeedbacks"></div>
+                </div>
+            </fieldset>
+            <!-- LESSON FEEDBACKS HELP AREA - END -->
+        </div>
+        <div class="col-md-9">
+            <!-- LESSON FEEDBACKS AREA - BEGIN -->
+            <fieldset>
+                <legend>&nbsp;</legend>
+                <div id="LessonSummary" class="row">
+                    <div id="lessonGoods" class="col-md-6">
+                        <div class="panel panel-info">
+                            <div class="panel-heading"><h3>{{labels.lessonGoods}}</h3></div>
+                            <div class="panel-body" ng-model="local.lesson.lessonGoods">
+
+                                <fieldset>
+                                    <div class="form-group">
+                                        <div class="col-lg-10 col-lg-offset-1 input-group">
+                                            <input class="form-control" type="text" ng-model="local.lessonGood">
+                                            <span class="input-group-btn">
+                                                <button class="btn btn-default" ng-click="actions.addGood()" type="button" tooltip="{{labels.addItem}}">{{labels.buttonAdd}}</button>
+                                            </span>
+                                        </div>
+
+                                    </div>
+
+                                    <div class="form-group">
+                                        <div class="col-lg-12">
+                                            <ol>
+                                                <li ng-repeat="good in local.lesson.goods | filter:actions.filterByActiveStatus">
+                                                    <wr-input wr-text="good.content" wr-ref="$index" edit-text="actions.editGood(ref)" remove-text="actions.removeGood(ref)" wr-class="input-sm" wr-style="width: 80%"></wr-input>
+                                                </li>
+                                            </ol>
+                                        </div>
+                                    </div>
+
+
+                                </fieldset>
+
+
+
+                            </div>
+                        </div>
+                    </div>
+                    <div id="lessonBads" class="col-md-6">
+                        <div class="panel panel-warning">
+                            <div class="panel-heading"><h3>{{labels.lessonBads}}</h3></div>
+                            <div class="panel-body">
+
+                                <fieldset>
+                                    <div class="form-group">
+                                        <div class="col-lg-10 col-lg-offset-1 input-group">
+                                            <input class="form-control" type="text" ng-model="local.lessonBad">
+                                            <span class="input-group-btn">
+                                                <button class="btn btn-default" ng-click="actions.addBad()" type="button" tooltip="{{labels.addItem}}">{{labels.buttonAdd}}</button>
+                                            </span>
+                                        </div>
+
+                                    </div>
+
+                                    <div class="form-group">
+                                        <div class="col-lg-12">
+                                            <ol>
+                                                <li ng-repeat="bad in local.lesson.bads | filter:actions.filterByActiveStatus">
+                                                    <wr-input wr-text="bad.content" wr-ref="$index" edit-text="actions.editBad(ref)" remove-text="actions.removeBad(ref)" wr-class="input-sm" wr-style="width: 80%"></wr-input>
+                                                </li>
+                                            </ol>
+                                        </div>
+                                    </div>
+                                </fieldset>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </fieldset>
+            <!-- LESSON FEEDBACKS AREA - END -->
+</div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-3">
+            <!-- LESSON CONCLUSION HELP AREA - BEGIN -->
+            <fieldset ng-show="local.viewHelp">
+                <legend style="border-bottom:0px;">&nbsp;</legend>
+                <div class="row helprow">
+                    <div class="rightarrowdiv" ng-bind-html="labels.helpConclusion"></div>
+                </div>
+            </fieldset>
+            <!-- LESSON CONCLUSION HELP AREA - END -->
+        </div>
+        <div class="col-md-9">
+            <!-- LESSON CONCLUSION AREA - BEGIN -->
+            <fieldset>
+                <legend>{{labels.conclusion}}</legend>
+                <div class="form-group">
+                    <div class="col-lg-12">
+                        <textarea type="textarea" 
+                                  class="form-control" 
+                                  id="inputConclusion" 
+                                  name="conclusion"
+                                  ui-tinymce="model.tinymceoptions" 
+                                  ng-model="local.lesson.conclusion" 
+                                  rows="5" 
+                                  ng-required="true"></textarea>
+                        <input type="button" class="btn btn-danger btn-xs" ng-show="local.isFieldRequired('conclusion')" disabled value="{{labels.requiredField}}" />
+                    </div>
+                </div>
+            </fieldset>
+            <!-- LESSON CONCLUSION AREA - END -->
+            <hr />
+
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-3"></div>
+        <div class="col-md-9">
+            <!-- FORM BUTTONS AREA - BEGIN -->
+            <div class="control-group pull-right">
+                <div class="controls">
+                    <a ng-click="actions.saveLesson()" class="btn btn-primary btn-lg">
+                        <span class="glyphicon glyphicon-floppy-disk pull-left"></span>
+                        <span>{{labels.saveLessonButton}}</span>
+                    </a>
+                    <a ng-click="actions.cancelEditing()" class="btn btn-default btn-lg">
+                        <span class="glyphicon glyphicon-off pull-left"></span>
+                        <span>{{labels.cancelButton}}</span>
+                    </a>
+                </div>
+            </div>
+            <!-- FORM BUTTONS AREA - END -->
+        </div>
+    </div>
+
+</form>
