@@ -72,7 +72,7 @@ namespace Discitur.Domain.Model
 
         public IMemento CreateMemento()
         {
-            return new LessonMemento(Id, Version, Title, Discipline, School, Classroom, Rate, AuthorId, PublishDate, Content, Conclusion, Published, CreationDate, LastModifDate, LastModifUser, RecordState, FeedBacks, Tags);
+            return new LessonMemento(Id, Version, Title, Discipline, School, Classroom, Rate, AuthorId, PublishDate, Content, Conclusion, Published, CreationDate, LastModifDate, LastModifUser, RecordState, FeedBacks, Tags, Comments, Ratings);
         }
         #endregion
 
@@ -329,8 +329,10 @@ namespace Discitur.Domain.Model
         public int RecordState { get; private set; }
         public ICollection<LessonFeedback> FeedBacks { get; private set; }
         public ICollection<LessonTag> Tags { get; private set; }
+        public ICollection<LessonComment> Comments { get; private set; }
+        public ICollection<LessonRating> Ratings { get; private set; }
 
-        public LessonMemento(Guid id, int version, string title, string discipline, string school, string classroom, int rate, Guid authorId, DateTime? publishDate, string content, string conclusion, int published, DateTime? creationDate, DateTime? lastModifDate, string lastModifUser, int recordState, ICollection<LessonFeedback> feedBacks, ICollection<LessonTag> tags)
+        public LessonMemento(Guid id, int version, string title, string discipline, string school, string classroom, int rate, Guid authorId, DateTime? publishDate, string content, string conclusion, int published, DateTime? creationDate, DateTime? lastModifDate, string lastModifUser, int recordState, ICollection<LessonFeedback> feedBacks, ICollection<LessonTag> tags, ICollection<LessonComment> comments, ICollection<LessonRating> ratings)
         {
             Id = id;
             Version = version;
@@ -350,6 +352,8 @@ namespace Discitur.Domain.Model
             RecordState = recordState;
             FeedBacks = feedBacks;
             Tags = tags;
+            Comments = comments;
+            Ratings = ratings;
         }
     }
 }

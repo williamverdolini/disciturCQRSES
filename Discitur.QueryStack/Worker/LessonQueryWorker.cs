@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace Discitur.QueryStack.Worker
 {
-    public class LessonQueryWorker : IQueryWorker, Discitur.QueryStack.Worker.ILessonQueryWorker
+    public class LessonQueryWorker : ILessonQueryWorker
     {
         private readonly IDatabase database;
 

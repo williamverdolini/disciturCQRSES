@@ -22,8 +22,9 @@ namespace Discitur.Api.Injection.Installers
                 );
 
             // DI Registration for IDatabase (QueryStack)
-            container.Register(Component.For<IDatabase>().ImplementedBy<Database>().LifestyleTransient());
+            container.Register(Component.For<IDatabase>().ImplementedBy<Database>().LifestyleTransient());            
             container.Register(Component.For<IIdentityMapper>().ImplementedBy<IdentityMapper>().LifestyleTransient());
+            container.Register(Component.For<IImageConverter>().ImplementedBy<ImageConverter>().LifestyleTransient());
         }
     }
 }

@@ -218,6 +218,7 @@
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\LessonController.cs" />
+    <Compile Include="Controllers\MigrationController.cs" />
     <Compile Include="Controllers\SEOLessonController.cs" />
     <Compile Include="Controllers\UserController.cs" />
     <Compile Include="Filters\ValidationModelActionFilter.cs" />
@@ -227,6 +228,7 @@
     <Compile Include="Injection\Installers\CommandStackInstaller.cs" />
     <Compile Include="Injection\Installers\ControllersInstaller.cs" />
     <Compile Include="Injection\Installers\EventStoreInstaller.cs" />
+    <Compile Include="Injection\Installers\LegacyMigrationInstaller.cs" />
     <Compile Include="Injection\Installers\QueryStackInstaller.cs" />
     <Compile Include="Injection\MVC\WindsorControllerFactory.cs" />
     <Compile Include="Injection\WebAPI\WindsorCompositionRoot.cs" />
@@ -286,10 +288,17 @@
       <Project>{c8e78209-35ed-4de6-b7de-b7ad352abc3f}</Project>
       <Name>Discitur.Infrastructure</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Discitur.Legacy.Migration\Discitur.Legacy.Migration.csproj">
+      <Project>{84d26a02-6f9b-45b9-b57a-651017ac9285}</Project>
+      <Name>Discitur.Legacy.Migration</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Discitur.QueryStack\Discitur.QueryStack.csproj">
       <Project>{1f7409fe-f18f-4a30-90b3-6dd88a610815}</Project>
       <Name>Discitur.QueryStack</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Service References\" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

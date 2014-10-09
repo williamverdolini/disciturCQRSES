@@ -17,8 +17,6 @@ namespace Discitur.Domain.Model
         public string Email { get; private set; }
         public string UserName { get; private set; }
         public byte[] Picture { get; private set; }
-        //public string Picture { get; private set; }
-        //public string Thumb { get; private set; }
         public bool IsActivated { get; private set; }
 
         #region Constructors and Factories
@@ -38,7 +36,6 @@ namespace Discitur.Domain.Model
             Email = mementoItem.Email;
             UserName = mementoItem.UserName;
             Picture = mementoItem.Picture;
-            //Thumb = mementoItem.Thumb;
             IsActivated = mementoItem.IsActivated;
         }
 
@@ -125,8 +122,6 @@ namespace Discitur.Domain.Model
         public string Email { get; set; }
         public string UserName { get; set; }
         public byte[] Picture { get; set; }
-        //public string Picture { get; set; }
-        //public string Thumb { get; set; }
         public bool IsActivated { get; private set; }
 
         public UserMemento(Guid id, int version, string name, string surname, string email, string userName, byte[] picture, /*string thumb,*/ bool isActivated)
@@ -138,7 +133,6 @@ namespace Discitur.Domain.Model
             Email = email;
             UserName = userName;
             Picture = picture;
-            //Thumb = thumb;
             IsActivated = isActivated;
         }
     }
