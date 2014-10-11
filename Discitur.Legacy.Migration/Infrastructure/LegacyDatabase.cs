@@ -20,7 +20,7 @@ namespace Discitur.Legacy.Migration.Infrastructure
             Context = new DisciturContext();
             //Context.Configuration.AutoDetectChangesEnabled = false;
             // Lazy loading is turned off
-            Context.Configuration.LazyLoadingEnabled = false;
+            Context.Configuration.LazyLoadingEnabled = true;
             Context.Database.Log = s => { System.Diagnostics.Debug.WriteLine(s); }; ; 
         }
 

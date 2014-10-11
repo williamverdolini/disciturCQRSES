@@ -29,7 +29,7 @@ namespace Discitur.Api.Injection.Installers
                 Classes
                 .FromAssemblyContaining<UserMigration>().InNamespace("Discitur.Legacy.Migration.Model")
                 .WithService.DefaultInterfaces()
-                .LifestyleSingleton()
+                .LifestyleTransient()
                 .Configure(component => component.DependsOn(Dependency.OnComponent<IDatabase, LegacyDatabase>()))                
                 );
 
