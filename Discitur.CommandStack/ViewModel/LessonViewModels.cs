@@ -214,8 +214,7 @@ namespace Discitur.CommandStack.ViewModel
         public int? ParentId { get; set; }
         [Required]
         public int Level { get; set; }
-        //[Required]
-        //public int Vers { get; set; }
+        public int Vers { get; set; }
     }
 
     public class RatingViewModel
@@ -229,6 +228,7 @@ namespace Discitur.CommandStack.ViewModel
         public int Rating { get; set; }
         public string Content { get; set; }
         public DateTime? Date { get; set; }
+        public int Vers { get; set; }
     }
 
 }

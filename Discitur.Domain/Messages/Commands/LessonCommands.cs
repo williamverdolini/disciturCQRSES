@@ -124,9 +124,10 @@ namespace Discitur.Domain.Messages.Commands
         public Guid ParentId { get; private set; }
         public int Level { get; private set; }
 
-        public AddNewCommentCommand(Guid lessonId, Guid authorId, string content, DateTime date, Guid parentCommentId, int level)
+        public AddNewCommentCommand(Guid lessonId, Guid authorId, string content, DateTime date, Guid parentCommentId, int level, int vers)
         {
             Id = lessonId;
+            Version = vers;
             CommentId = Guid.NewGuid();
             AuthorId = authorId;
             Content = content;
@@ -142,9 +143,10 @@ namespace Discitur.Domain.Messages.Commands
         public string Content { get; private set; }
         public DateTime Date { get; private set; }
 
-        public EditCommentCommand(Guid lessonId, Guid commentId, string content, DateTime date)
+        public EditCommentCommand(Guid lessonId, Guid commentId, string content, DateTime date, int vers)
         {
             Id = lessonId;
+            Version = vers;
             CommentId = commentId;
             Content = content;
             Date = date;
@@ -156,9 +158,10 @@ namespace Discitur.Domain.Messages.Commands
         public Guid CommentId { get; private set; }
         public DateTime Date { get; private set; }
 
-        public DeleteCommentCommand(Guid lessonId, Guid commentId, DateTime date)
+        public DeleteCommentCommand(Guid lessonId, Guid commentId, DateTime date, int vers)
         {
             Id = lessonId;
+            Version = vers;
             CommentId = commentId;
             Date = date;
         }
@@ -172,9 +175,10 @@ namespace Discitur.Domain.Messages.Commands
         public string Content { get; private set; }
         public DateTime Date { get; private set; }
 
-        public AddNewRatingCommand(Guid lessonId, Guid userId, int rating, string content, DateTime date)
+        public AddNewRatingCommand(Guid lessonId, Guid userId, int rating, string content, DateTime date, int vers)
         {
             Id = lessonId;
+            Version = vers;
             RatingId = Guid.NewGuid();
             UserId = userId;
             Rating = rating;
@@ -190,9 +194,10 @@ namespace Discitur.Domain.Messages.Commands
         public string Content { get; private set; }
         public DateTime Date { get; private set; }
 
-        public EditRatingCommand(Guid lessonId, Guid ratingId, int rating, string content, DateTime date)
+        public EditRatingCommand(Guid lessonId, Guid ratingId, int rating, string content, DateTime date, int vers)
         {
             Id = lessonId;
+            Version = vers;
             RatingId = ratingId;
             Rating = rating;
             Content = content;
@@ -205,9 +210,10 @@ namespace Discitur.Domain.Messages.Commands
         public Guid RatingId { get; private set; }
         public DateTime Date { get; set; }
 
-        public DeleteRatingCommand(Guid lessonId, Guid ratingId, DateTime date)
+        public DeleteRatingCommand(Guid lessonId, Guid ratingId, DateTime date, int vers)
         {
             Id = lessonId;
+            Version = vers;
             RatingId = ratingId;
             Date = date;
         }

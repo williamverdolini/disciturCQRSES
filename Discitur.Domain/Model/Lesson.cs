@@ -55,14 +55,17 @@ namespace Discitur.Domain.Model
             AuthorId = mementoItem.AuthorId;
             Content = mementoItem.Content;
             Conclusion = mementoItem.Conclusion;
+            Rate = mementoItem.Rate;
+            Published = mementoItem.Published;
+            PublishDate = mementoItem.PublishDate;
             CreationDate = mementoItem.CreationDate ?? DateTime.Now;
             LastModifDate = mementoItem.LastModifDate;
-            Published = mementoItem.Published;
+            LastModifUser = mementoItem.LastModifUser;
             RecordState = mementoItem.RecordState;
             FeedBacks = mementoItem.FeedBacks;
             Tags = mementoItem.Tags;
-            Comments = new List<LessonComment>();
-            Ratings = new List<LessonRating>();
+            Comments = mementoItem.Comments;
+            Ratings = mementoItem.Ratings;
         }
 
         public Lesson(Guid id, string title, string discipline, string school, string classroom, Guid authorId, string content, string conclusion, DateTime? creationDate, IDictionary<EntityStatus, ICollection<LessonFeedback>> feedBacks, IDictionary<EntityStatus, ICollection<LessonTag>> tags)

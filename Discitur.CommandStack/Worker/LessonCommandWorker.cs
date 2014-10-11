@@ -131,7 +131,7 @@ namespace Discitur.CommandStack.Worker
             Guid parentId = model.ParentId == null ? Guid.Empty : database.IdMaps.GetAggregateId<LessonComment>(model.ParentId.Value);
             DateTime date = model.Date == null ? DateTime.Now : model.Date.Value;
 
-            var command = new AddNewCommentCommand(lessonId, authorId, model.Content, date, parentId, model.Level);
+            var command = new AddNewCommentCommand(lessonId, authorId, model.Content, date, parentId, model.Level, model.Vers);
             bus.Send<AddNewCommentCommand>(command);
             model.Id = database.IdMaps.GetModelId<LessonComment>(command.CommentId);
         }
@@ -142,7 +142,7 @@ namespace Discitur.CommandStack.Worker
             Guid commentId = database.IdMaps.GetAggregateId<LessonComment>(model.Id.Value);
             DateTime date = model.Date == null ? DateTime.Now : model.Date.Value;
 
-            bus.Send<EditCommentCommand>(new EditCommentCommand(lessonId, commentId, model.Content, date));
+            bus.Send<EditCommentCommand>(new EditCommentCommand(lessonId, commentId, model.Content, date, model.Vers));
         }
 
         public void DeleteComment(CommentViewModel model)
@@ -151,7 +151,7 @@ namespace Discitur.CommandStack.Worker
             Guid commentId = database.IdMaps.GetAggregateId<LessonComment>(model.Id.Value);
             DateTime date = model.Date == null ? DateTime.Now : model.Date.Value;
 
-            bus.Send<DeleteCommentCommand>(new DeleteCommentCommand(lessonId, commentId, date));
+            bus.Send<DeleteCommentCommand>(new DeleteCommentCommand(lessonId, commentId, date, model.Vers));
         }
 
         public void AddNewRating(RatingViewModel model)
@@ -160,7 +160,7 @@ namespace Discitur.CommandStack.Worker
             Guid authorId = database.IdMaps.GetAggregateId<User>(model.Author.UserId);
             DateTime date = model.Date == null ? DateTime.Now : model.Date.Value;
 
-            var command = new AddNewRatingCommand(lessonId, authorId,model.Rating, model.Content, date);
+            var command = new AddNewRatingCommand(lessonId, authorId, model.Rating, model.Content, date, model.Vers);
             bus.Send<AddNewRatingCommand>(command);
             model.Id = database.IdMaps.GetModelId<LessonRating>(command.RatingId);
         }
@@ -171,7 +171,7 @@ namespace Discitur.CommandStack.Worker
             Guid ratingId = database.IdMaps.GetAggregateId<LessonRating>(model.Id.Value);
             DateTime date = model.Date == null ? DateTime.Now : model.Date.Value;
 
-            bus.Send<EditRatingCommand>(new EditRatingCommand(lessonId, ratingId,model.Rating, model.Content, date));
+            bus.Send<EditRatingCommand>(new EditRatingCommand(lessonId, ratingId, model.Rating, model.Content, date, model.Vers));
         }
 
         public void DeleteRating(RatingViewModel model)
@@ -180,7 +180,7 @@ namespace Discitur.CommandStack.Worker
             Guid ratingId = database.IdMaps.GetAggregateId<LessonRating>(model.Id.Value);
             DateTime date = model.Date == null ? DateTime.Now : model.Date.Value;
 
-            bus.Send<DeleteRatingCommand>(new DeleteRatingCommand(lessonId, ratingId, date));
+            bus.Send<DeleteRatingCommand>(new DeleteRatingCommand(lessonId, ratingId, date, model.Vers));
         }
     }
 }

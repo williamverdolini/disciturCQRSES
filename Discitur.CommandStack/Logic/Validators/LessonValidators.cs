@@ -91,12 +91,12 @@ namespace Discitur.CommandStack.Logic.Validators
             RuleFor(command => command.UserId).NotEmpty();
             RuleFor(command => command.UserId).Must(BeNotSubmittedBySameUser).WithMessage("User has already has submitted a rating for this lesson");
             RuleFor(command => command.Rating).GreaterThan(0);
-            RuleFor(command => command.Date).NotEmpty().LessThanOrEqualTo(DateTime.Now);
+            //RuleFor(command => command.Date).NotEmpty().LessThanOrEqualTo(DateTime.Now);
         }
 
         private bool BeNotSubmittedBySameUser(AddNewRatingCommand command, Guid userId)
         {
-            Lesson lesson = repo.GetById<Lesson>(command.Id);
+            Lesson lesson = repo.GetById<Lesson>(command.Id, command.Version);
             return !lesson.Ratings.Any(r => r.UserId.Equals(userId) && r.RecordState.Equals(Constants.RECORD_STATE_ACTIVE));
 
         }
