@@ -5,6 +5,7 @@ using Discitur.QueryStack.Model;
 using NEventStore;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 
 namespace Discitur.Legacy.Migration.Model
@@ -24,7 +25,7 @@ namespace Discitur.Legacy.Migration.Model
 
         public void Execute()
         {
-            foreach (var lesson in _db.Lessons)
+            foreach (var lesson in _db.Lessons.ToList())
             {
                 if (_db.IdMaps.GetAggregateId<Lesson>(lesson.LessonId).Equals(Guid.Empty))
                 {
@@ -69,8 +70,7 @@ namespace Discitur.Legacy.Migration.Model
 
                     // Save Ids mapping
                     _db.IdMaps.Map<Lesson>(lesson.LessonId, entityId);
-
-                    System.Diagnostics.Debug.WriteLine("Successfully migrated Lesson id: {0}, Guid: {1}, Title: {2}", new object[] { lesson.LessonId, entityId.ToString(), lesson.Title });
+                    Trace.WriteLine(String.Format("Successfully migrated Lesson id: {0}, Guid: {1}, Title: {2}", lesson.LessonId, entityId.ToString(), lesson.Title), "Migration Process");
                 }
             }
         }
@@ -108,9 +108,9 @@ namespace Discitur.Legacy.Migration.Model
         private ICollection<Domain.Model.LessonComment> GetLessonComments(Lesson lesson)
         {
             ICollection<Domain.Model.LessonComment> DomainComments = new List<Domain.Model.LessonComment>();
-            var lessonComments = from c in _db.LessonComments
+            var lessonComments = (from c in _db.LessonComments
                                  where c.LessonId.Equals(lesson.LessonId)
-                                 select c;
+                                 select c).ToList();
 
             foreach (var comment in lessonComments)
             {

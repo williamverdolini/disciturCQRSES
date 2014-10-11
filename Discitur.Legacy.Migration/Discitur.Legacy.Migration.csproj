@@ -52,6 +52,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Infrastructure\Exceptions\RecoverableException.cs" />
     <Compile Include="Infrastructure\IMigrationStepFactory.cs" />
     <Compile Include="Infrastructure\LegacyDatabase.cs" />
     <Compile Include="Infrastructure\MigrationProcess.cs" />

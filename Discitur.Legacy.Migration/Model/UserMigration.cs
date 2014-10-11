@@ -1,10 +1,12 @@
 ﻿using Discitur.Infrastructure;
 using Discitur.Legacy.Migration.Infrastructure;
+using Discitur.Legacy.Migration.Infrastructure.Exceptions;
 using Discitur.QueryStack;
 using Discitur.QueryStack.Logic.Services;
 using Discitur.QueryStack.Model;
 using NEventStore;
 using System;
+using System.Diagnostics;
 using System.Linq;
 
 namespace Discitur.Legacy.Migration.Model
@@ -44,7 +46,8 @@ namespace Discitur.Legacy.Migration.Model
                 string message = pendingUserActivations > 1 ?
                     "User Migration Not started: there are {0} pending User activations. Please wait till these accounts will be activated." :
                     "User Migration Not started: there is {0} pending User activation. Please wait till this account will be activated.";
-                Console.WriteLine(message, pendingUserActivations);
+                Trace.WriteLine(String.Format(message, pendingUserActivations), "Migration Process");
+                throw new RecoverableException(String.Format(message, pendingUserActivations));
             }
         }
 
@@ -78,8 +81,7 @@ namespace Discitur.Legacy.Migration.Model
 
                     // Save Ids mapping
                     _db.IdMaps.Map<User>(user.UserId, entityId);
-
-                    System.Diagnostics.Debug.WriteLine("Successfully migrated User id: {0}, Guid: {1}, UserName:{2}", new object[] { user.UserId, entityId.ToString(), user.UserName });
+                    Trace.WriteLine(String.Format("Successfully migrated User id: {0}, Guid: {1}, UserName:{2}", user.UserId, entityId.ToString(), user.UserName), "Migration Process");
                 }
             }
         }

@@ -18,12 +18,14 @@ namespace Discitur.Legacy.Migration.Logic
         public void ExecuteMigration()
         {
             // Configure Migration Process with sequence of the migration steps
-            var migration = MigrationProcess.Init()
-                            .Then(_migrationStepFactory.Create<IUserMigration>())       // Migrate Users
-                            .Then(_migrationStepFactory.Create<IQueryIdsMigration>())   // Migrate read-model IDs
-                            .Then(_migrationStepFactory.Create<ILessonMigration>());    // Migrate Lessons
+            MigrationProcess
+                .Init()                                                     // Initialize Migration Process
+                .Then(_migrationStepFactory.Create<IUserMigration>())       // Migrate Users
+                .Then(_migrationStepFactory.Create<IQueryIdsMigration>())   // Migrate read-model IDs
+                .Then(_migrationStepFactory.Create<ILessonMigration>())     // Migrate Lessons
+                .Configured()                                               // Migration Process Configured
+                .Execute();
 
-            migration.Execute();
         }
 
     }
