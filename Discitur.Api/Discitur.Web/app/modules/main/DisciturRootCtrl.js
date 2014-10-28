@@ -31,11 +31,11 @@
             var changeStartCallbacks = [
                 // 1. Initialize Authentication Data e delete itself
                 function (event) {
-                    event.preventDefault();
+                    //event.preventDefault();
                     AuthService.resolveAuth()['finally'](function () {
                         // http://angular-ui.github.io/ui-router/site/#/api/ui.router.router.$urlRouter
                         // Continue with the update and state transition if logic allows
-                        $urlRouter.sync();
+                        //$urlRouter.sync();
                         // Force again sync because $location.path() is not updated with "otherwise route"
                         //$urlRouter.sync();
                     });
@@ -46,7 +46,7 @@
                 function (event, toState, toParams, fromState, fromParams) {
                     if (toState.authorized && !AuthService.user.isLogged) {
                         // event preventDefault to stop the flow and redirect
-                        event.preventDefault();
+                        //event.preventDefault();
                         $state.go('lessonSearch');
                     }
                 }

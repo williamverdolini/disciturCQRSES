@@ -302,15 +302,6 @@ namespace Discitur.Domain.Model
         #endregion
     }
 
-    //public struct Rating
-    //{
-    //    public int Value { get; private set; }
-    //    public Rating(int value) : this()
-    //    {
-    //        Value = value;
-    //    }
-    //}
-
     public class LessonMemento : IMemento
     {
         public Guid Id { get; set; }

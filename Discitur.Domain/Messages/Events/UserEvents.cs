@@ -1,12 +1,11 @@
-﻿using Discitur.Infrastructure.Events;
+﻿using Discitur.Domain.Model;
+using Discitur.Infrastructure.Events;
+using Discitur.Infrastructure.Events.Versioning;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Discitur.Domain.Messages.Events
 {
+    [VersionedEvent("RegisteredUserEvent", 0)]
     public class RegisteredUserEvent : Event
     {
         public string Name { get; private set; }
@@ -24,6 +23,7 @@ namespace Discitur.Domain.Messages.Events
         }
     }
 
+    [VersionedEvent("ActivatedUserEvent", 0)]
     public class ActivatedUserEvent : Event
     {
         public string UserName { get; private set; }
@@ -35,6 +35,7 @@ namespace Discitur.Domain.Messages.Events
         }
     }
 
+    [VersionedEvent("ChangedUserEmailEvent", 0)]
     public class ChangedUserEmailEvent : Event
     {
         public string Email { get; private set; }
@@ -46,6 +47,7 @@ namespace Discitur.Domain.Messages.Events
         }
     }
 
+    [VersionedEvent("ChangedUserPictureEvent", 0)]
     public class ChangedUserPictureEvent : Event
     {
         public byte[] Picture { get; private set; }
@@ -57,6 +59,15 @@ namespace Discitur.Domain.Messages.Events
         }
     }
 
+    [VersionedEvent("UserMementoPropagatedEvent", 0)]
+    public class UserMementoPropagatedEvent : Event
+    {
+        public UserMemento Memento { get; private set; }
 
+        public UserMementoPropagatedEvent(UserMemento memento)
+        {
+            Memento = memento;
+        }
 
+    }
 }

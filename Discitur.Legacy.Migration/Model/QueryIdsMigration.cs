@@ -4,6 +4,7 @@ using Discitur.QueryStack;
 using Discitur.QueryStack.Model;
 using System;
 using System.Linq;
+using System.Transactions;
 
 namespace Discitur.Legacy.Migration.Model
 {
@@ -26,10 +27,6 @@ namespace Discitur.Legacy.Migration.Model
 
         private void MapLessonFeedbacksId()
         {
-            //var feedbacks = from feedback in _db.LessonFeedbacks
-            //                where _db.IdMaps.GetAggregateId<LessonFeedback>(feedback.LessonFeedbackId).Equals(Guid.Empty)
-            //                select feedback;
-
             foreach (var feedback in _db.LessonFeedbacks)
             {
                 if(_db.IdMaps.GetAggregateId<LessonFeedback>(feedback.LessonFeedbackId).Equals(Guid.Empty))
@@ -46,10 +43,6 @@ namespace Discitur.Legacy.Migration.Model
 
         private void MapLessonCommentsId()
         {
-            //var comments = from comment in _db.LessonComments
-            //               where _db.IdMaps.GetAggregateId<LessonComment>(comment.Id).Equals(Guid.Empty)
-            //               select comment;
-
             foreach (var comment in _db.LessonComments)
             {
                 if(_db.IdMaps.GetAggregateId<LessonComment>(comment.Id).Equals(Guid.Empty))
@@ -66,10 +59,6 @@ namespace Discitur.Legacy.Migration.Model
 
         private void MapLessonRatingsId()
         {
-            //var ratings = from rating in _db.LessonRatings
-            //              where _db.IdMaps.GetAggregateId<LessonRating>(rating.Id).Equals(Guid.Empty)
-            //              select rating;
-
             foreach (var rating in _db.LessonRatings)
             {
                 if(_db.IdMaps.GetAggregateId<LessonRating>(rating.Id).Equals(Guid.Empty))

@@ -46,6 +46,9 @@
                 },
                 userProfile: function () {
                     $state.go('userProfile', null, { inherit: false });
+                },
+                consoleAdmin: function () {
+                    $state.go('adminConsole', null, { inherit: false });
                 }
             }
             // Login Event management
@@ -58,12 +61,15 @@
                 userSignIn: $scope.getLabel('userSignIn'),
                 userSignOff: $scope.getLabel('userSignOff'),
                 userProfile: $scope.getLabel('userProfile'),
-                userLessons: $scope.getLabel('userLessons')
+                userLessons: $scope.getLabel('userLessons'),
+                userAdministration: $scope.getLabel('userAdministration')
             };
+            //var _isAdmin = AuthService.user.isAdministration();
             // Authentication user data
             $scope.model = {
                 username: AuthService.user.username,
-                isLogged: AuthService.user.isLogged
+                isLogged: AuthService.user.isLogged,
+                isAdministration: function () { return AuthService.user.isAdministration(); }
             }
             $scope.$watch(function () { return AuthService.user.isLogged; },
                 function () {

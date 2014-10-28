@@ -80,6 +80,8 @@
         userImageCancel: 'Annulla',
         userImageName: "Nome:",
         userImageSize: "Dimensione:",
+        userAdministration: "Amministratore",
+        adminMigrate3Layer2CqrsEs: "Migrazione da 3-Layer a CQRS+ES",
 
         editLessonButton: "Modifica",
         requiredField: "Dato obbligario",

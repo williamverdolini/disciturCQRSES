@@ -133,7 +133,10 @@ namespace Discitur.Api.Controllers
             ExternalLoginData externalLogin = ExternalLoginData.FromIdentity(User.Identity as ClaimsIdentity);
 
             string userName = User.Identity.GetUserName();
-            return await QueryWorker.GetUserByUserName(userName);
+            bool isAdmin = UserManager.GetRoles(User.Identity.GetUserId()).Contains(Constants.DISCITUR_ADMIN_ROLE);
+            User user = await QueryWorker.GetUserByUserName(userName);
+            user.IsAdmin = isAdmin;
+            return user;
         }
         #endregion
 

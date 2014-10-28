@@ -18,12 +18,13 @@ namespace Discitur.QueryStack.Model
         public string UserName { get; set; }
         public string Picture { get; set; }
         public string Thumb { get; set; }
-
+        [NotMapped]
+        public bool IsAdmin { get; set; }
     }
 
-    [NotMapped]
-    public class Account : User
-    {
-        public string Password { get; set; }
-    }
+    //[NotMapped]
+    //public class Account : User
+    //{
+    //    public string Password { get; set; }
+    //}
 }

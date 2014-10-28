@@ -1,4 +1,5 @@
-﻿using Discitur.Infrastructure;
+﻿using Discitur.Api.Common;
+using Discitur.Infrastructure;
 using Discitur.Legacy.Migration.Worker;
 using System;
 using System.Collections.Generic;
@@ -9,6 +10,7 @@ using System.Web.Http;
 
 namespace Discitur.Api.Controllers
 {
+    [Authorize(Roles = Constants.DISCITUR_ADMIN_ROLE)]
     public class MigrationController : ApiController
     {
         private readonly LegacyMigrationWorker Worker;

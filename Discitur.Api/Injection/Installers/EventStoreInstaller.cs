@@ -5,8 +5,11 @@ using CommonDomain;
 using CommonDomain.Core;
 using CommonDomain.Persistence;
 using CommonDomain.Persistence.EventStore;
+using Discitur.Domain.Messages.Events;
 using Discitur.Infrastructure;
+using Discitur.Infrastructure.Events.Versioning;
 using NEventStore;
+using NEventStore.Conversion;
 using NEventStore.Dispatcher;
 using NEventStore.Persistence.Sql.SqlDialects;
 using System;
@@ -54,6 +57,12 @@ namespace Discitur.Api.Injection.Installers
         public void Install(IWindsorContainer container, IConfigurationStore store)
         {
             container.Register(Component.For<IBus, IDispatchCommits>().ImplementedBy<InMemoryBus>().LifestyleSingleton());
+            container.Register(
+                Classes
+                .FromAssemblyContaining<SavedNewDraftLessonEvent>()
+                .BasedOn(typeof(IUpconvertEvents<,>)) // That implement IUpconvertEvents<,> Interface
+                .WithService.Base()
+                .LifestyleTransient());
 
             _store =
                     Wireup
@@ -63,10 +72,17 @@ namespace Discitur.Api.Injection.Installers
                     .UsingSqlPersistence("EventStore") // Connection string is in web.config
                         .WithDialect(new MsSqlDialect())
                         .InitializeStorageEngine()
-                        .UsingJsonSerialization()
+                        //.UsingJsonSerialization()
+                        .UsingNewtonsoftJsonSerialization(new VersionedEventSerializationBinder())
+                        .Compress()
                     .UsingSynchronousDispatchScheduler()
                         .DispatchTo(container.Resolve<IDispatchCommits>())
+                        .Startup(DispatcherSchedulerStartup.Explicit)
+                    .UsingEventUpconversion()
+                        .WithConvertersFromAssemblyContaining(new Type[] { typeof(SavedNewDraftLessonEvent) })
                     .Build();
+
+            _store.StartDispatchScheduler();
 
             container.Register(
                 Component.For<IStoreEvents>().Instance(_store),

@@ -9,6 +9,7 @@
             <ul class="dropdown-menu">
                 <li><a ng-click="actions.userProfile()">{{labels.userProfile}}</a></li>
                 <li><a ng-click="actions.searchUserLessons()">{{labels.userLessons}}</a></li>
+                <li><a ng-show="model.isAdministration()" ng-click="actions.consoleAdmin()">{{labels.userAdministration}}</a></li>
                 <li><a ng-click="actions.signOff()">{{labels.userSignOff}}</a></li>
             </ul>
         </li>

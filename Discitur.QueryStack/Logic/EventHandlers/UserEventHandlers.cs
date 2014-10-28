@@ -15,7 +15,8 @@ namespace Discitur.QueryStack.Logic.EventHandlers
         IEventHandler<RegisteredUserEvent>,
         IEventHandler<ActivatedUserEvent>,
         IEventHandler<ChangedUserEmailEvent>,
-        IEventHandler<ChangedUserPictureEvent>
+        IEventHandler<ChangedUserPictureEvent>,
+        IEventHandler<UserMementoPropagatedEvent>
     {
         private readonly IIdentityMapper _identityMapper;
         private readonly IImageConverter _imageConverter;
@@ -93,37 +94,50 @@ namespace Discitur.QueryStack.Logic.EventHandlers
                 int userId = _identityMapper.GetModelId<User>(@event.Id);
                 User user = db.Users.Find(userId);
 
-                //Stream stPictureSource = new MemoryStream(@event.Picture);
-                //Stream stThumbSource = new MemoryStream(@event.Picture);
-                //// Resize for Picture
-                //MemoryStream stPictureDest = new MemoryStream();
-                //var pictureSettings = new ResizeSettings
-                //{
-                //    MaxWidth = Constants.USER_PICTURE_MAXWIDTH,
-                //    MaxHeight = Constants.USER_PICTURE_MAXHEIGHT,
-                //    Format = Constants.USER_PICTURE_FORMAT,
-                //    Mode = FitMode.Crop
-                //};
-                //ImageBuilder.Current.Build(stPictureSource, stPictureDest, pictureSettings);
-
-                //// Resize for ThumbNail
-                //MemoryStream stThumbDest = new MemoryStream();
-                //var thumbSettings = new ResizeSettings
-                //{
-                //    MaxWidth = Constants.USER_THUMB_MAXWIDTH,
-                //    MaxHeight = Constants.USER_THUMB_MAXHEIGHT,
-                //    Format = Constants.USER_THUMB_FORMAT,
-                //    Mode = FitMode.Crop
-                //};
-                //ImageBuilder.Current.Build(stThumbSource, stThumbDest, thumbSettings);
-
-                //user.Picture = "data:image/gif;base64," + Convert.ToBase64String(stPictureDest.ToArray());
-                //user.Thumb = "data:image/gif;base64," + Convert.ToBase64String(stThumbDest.ToArray());
-
                 user.Picture = "data:image/gif;base64," + _imageConverter.ToPictureString(@event.Picture);
                 user.Thumb = "data:image/gif;base64," + _imageConverter.ToThumbNailString(@event.Picture);
                 
                 db.SaveChanges();
+            }
+        }
+
+        public void Handle(UserMementoPropagatedEvent @event)
+        {
+            using (var db = new DisciturContext())
+            {
+                int itemId = _identityMapper.GetModelId<User>(@event.Memento.Id);
+                if (itemId.Equals(0))
+                {
+                    // User not exists
+                    // Add new User to Read-Model
+                    var _picture = @event.Memento.Picture != null ? "data:image/gif;base64," + _imageConverter.ToPictureString(@event.Memento.Picture) : Constants.USER_DEFAULT_PICTURE;
+                    var _thumb = @event.Memento.Picture != null ? "data:image/gif;base64," + _imageConverter.ToThumbNailString(@event.Memento.Picture) : null;
+
+                    User discuser = new User
+                    {
+                        Name = @event.Memento.Name,
+                        Surname = @event.Memento.Surname,
+                        Email = @event.Memento.Email,
+                        UserName = @event.Memento.UserName,
+                        Picture = _picture,
+                        Thumb = _thumb
+                    };
+                    db.Users.Add(discuser);
+
+                    if(!@event.Memento.IsActivated)
+                    {
+                        // Add new User-Activation Key to Read-Model
+                        UserActivation userActivation = new UserActivation
+                        {
+                            UserName = @event.Memento.UserName,
+                            Key = @event.Memento.Id.ToString()
+                        };
+                        db.UserActivations.Add(userActivation);
+                    }
+                    db.SaveChanges();
+                    _identityMapper.Map<User>(discuser.UserId, @event.Id);
+                }
+                // otherwise it could be used for maintenance purposes
             }
         }
     }

@@ -1,16 +1,29 @@
 ﻿angular.module('disc.user')
     // Constructor to create User Object
     .factory('UserDTO', function () {
-        function UserDTO() {
-            this.userid = null;
-            this.name = null;
-            this.surname = null;
-            this.username = null;
-            this.image = null;
-            this.thumb = null;
-            this.email = null;
-            this.roles = [];
+        //function UserDTO() {
+        //    this.userid = null;
+        //    this.name = null;
+        //    this.surname = null;
+        //    this.username = null;
+        //    this.image = null;
+        //    this.thumb = null;
+        //    this.email = null;
+        //    this.roles = [];
+        //    this.isLogged = null;
+        //}
+        function UserDTO(_id, _name, _surname, _username, _image, _thumb, _email, _isAdmin) {
+            this.userid = _id || null;
+            this.name = _name || null;
+            this.surname = _surname || null;
+            this.username = _username || null;
+            this.image = _image || null;
+            this.thumb = _thumb || null;
+            this.email = _email || null;
+            //this.roles = [];
+            var isAdmin = _isAdmin || false;
             this.isLogged = null;
+            this.isAdministration = function () { return isAdmin;}
         }
         return (UserDTO);
     })
@@ -60,14 +73,24 @@
             }
             // User data transfer from API
             var _setUserData = function (apiData) {
-                var _user = new UserDTO();
-                _user.userid = apiData.UserId;
-                _user.name = apiData.Name;
-                _user.surname = apiData.Surname;
-                _user.username = apiData.UserName || apiData.userName;
-                _user.image = apiData.Picture;
-                _user.thumb = apiData.Thumb || apiData.Picture;
-                _user.email = apiData.Email;
+                //var _user = new UserDTO();
+                //_user.userid = apiData.UserId;
+                //_user.name = apiData.Name;
+                //_user.surname = apiData.Surname;
+                //_user.username = apiData.UserName || apiData.userName;
+                //_user.image = apiData.Picture;
+                //_user.thumb = apiData.Thumb || apiData.Picture;
+                //_user.email = apiData.Email;
+                var _user = new UserDTO(
+                    apiData.UserId,
+                    apiData.Name,
+                    apiData.Surname,
+                    apiData.UserName || apiData.userName,
+                    apiData.Picture,
+                    apiData.Thumb || apiData.Picture,
+                    apiData.Email,
+                    apiData.IsAdmin
+                    );
                 _user.isLogged = true;
                 return _user;
             }

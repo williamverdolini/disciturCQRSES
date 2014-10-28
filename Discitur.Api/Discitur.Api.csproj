@@ -155,6 +155,7 @@
     <Reference Include="System.Web.Mvc, Version=5.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Microsoft.AspNet.Mvc.5.0.0\lib\net45\System.Web.Mvc.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="System.Web.Razor, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -283,6 +284,10 @@
     <ProjectReference Include="..\Discitur.CommandStack\Discitur.CommandStack.csproj">
       <Project>{f8d6f632-59f7-4047-a774-17bc971fa4ee}</Project>
       <Name>Discitur.CommandStack</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Discitur.Domain\Discitur.Domain.csproj">
+      <Project>{e72e2f44-669f-4543-a639-835e5ad25e14}</Project>
+      <Name>Discitur.Domain</Name>
     </ProjectReference>
     <ProjectReference Include="..\Discitur.Infrastructure\Discitur.Infrastructure.csproj">
       <Project>{c8e78209-35ed-4de6-b7de-b7ad352abc3f}</Project>

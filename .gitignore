@@ -4,7 +4,8 @@ Discitur.Api/Discitur.Web/app/bower_components/
 packages/
 Discitur.Api/Discitur.Web/app/data/
 Discitur.Api/Discitur.Web/app/assets/
-Discitur.Api/Discitur.Web/app/deploy/
+Discitur.Api/Discitur.Web/deploy/
+Discitur.Api/Discitur.Web/node_modules/
 *.user
 *.suo
 Discitur.Api/Web.reserved.config

@@ -5,7 +5,8 @@
         'disc.settings',
         'disc.common',
         'disc.lesson',
-        'disc.user'
+        'disc.user',
+        'disc.admin'
     ])
     .config(
     [

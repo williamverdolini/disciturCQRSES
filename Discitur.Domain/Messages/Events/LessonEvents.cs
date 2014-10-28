@@ -1,12 +1,13 @@
 ﻿using Discitur.Domain.Messages.Commands;
 using Discitur.Domain.Model;
 using Discitur.Infrastructure.Events;
+using Discitur.Infrastructure.Events.Versioning;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace Discitur.Domain.Messages.Events
 {
+    [VersionedEvent("SavedNewDraftLessonEvent", 0)]
     public class SavedNewDraftLessonEvent : Event
     {
         public string Title { get; private set; }
@@ -40,6 +41,7 @@ namespace Discitur.Domain.Messages.Events
         }
     }
 
+    [VersionedEvent("SavedDraftLessonEvent", 0)]
     public class SavedDraftLessonEvent : Event
     {
         public string Title { get; private set; }
@@ -75,6 +77,7 @@ namespace Discitur.Domain.Messages.Events
         }
     }
 
+    [VersionedEvent("PublishedLessonEvent", 0)]
     public class PublishedLessonEvent : Event
     {
         //public string Title { get; private set; }
@@ -111,6 +114,7 @@ namespace Discitur.Domain.Messages.Events
         }
     }
 
+    [VersionedEvent("UnPublishedLessonEvent", 0)]
     public class UnPublishedLessonEvent : Event
     {
         public DateTime? UnPublishDate { get; private set; }
@@ -123,6 +127,7 @@ namespace Discitur.Domain.Messages.Events
         }
     }
 
+    [VersionedEvent("AddedNewCommentEvent", 0)]
     public class AddedNewCommentEvent : Event
     {
         public Guid CommentId { get; private set; }
@@ -145,6 +150,7 @@ namespace Discitur.Domain.Messages.Events
         }
     }
 
+    [VersionedEvent("EditedCommentEvent", 0)]
     public class EditedCommentEvent : Event
     {
         public Guid CommentId { get; private set; }
@@ -161,6 +167,7 @@ namespace Discitur.Domain.Messages.Events
         }
     }
 
+    [VersionedEvent("DeletedCommentEvent", 0)]
     public class DeletedCommentEvent : Event
     {
         public Guid CommentId { get; private set; }
@@ -175,6 +182,7 @@ namespace Discitur.Domain.Messages.Events
         }
     }
 
+    [VersionedEvent("AddedNewRatingEvent", 0)]
     public class AddedNewRatingEvent : Event
     {
         public Guid RatingId { get; private set; }
@@ -195,6 +203,7 @@ namespace Discitur.Domain.Messages.Events
         }
     }
 
+    [VersionedEvent("EditedRatingEvent", 0)]
     public class EditedRatingEvent : Event
     {
         public Guid RatingId { get; private set; }
@@ -213,6 +222,7 @@ namespace Discitur.Domain.Messages.Events
         }
     }
 
+    [VersionedEvent("DeletedRatingEvent", 0)]
     public class DeletedRatingEvent : Event
     {
         public Guid RatingId { get; private set; }
@@ -227,4 +237,15 @@ namespace Discitur.Domain.Messages.Events
         }
     }
 
+    [VersionedEvent("LessonMementoPropagatedEvent", 0)]
+    public class LessonMementoPropagatedEvent : Event
+    {
+        public LessonMemento Memento { get; private set; }
+
+        public LessonMementoPropagatedEvent(LessonMemento memento)
+        {
+            Memento = memento;
+        }
+
+    }
 }

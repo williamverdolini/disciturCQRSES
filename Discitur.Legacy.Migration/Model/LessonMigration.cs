@@ -1,4 +1,5 @@
-﻿using Discitur.Infrastructure;
+﻿using Discitur.Domain.Messages.Events;
+using Discitur.Infrastructure;
 using Discitur.Legacy.Migration.Infrastructure;
 using Discitur.QueryStack;
 using Discitur.QueryStack.Model;
@@ -7,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Transactions;
 
 namespace Discitur.Legacy.Migration.Model
 {
@@ -33,6 +35,9 @@ namespace Discitur.Legacy.Migration.Model
                     Guid entityId = Guid.NewGuid();
                     while (!_db.IdMaps.GetModelId<Lesson>(entityId).Equals(0))
                         entityId = Guid.NewGuid();
+
+                    // Save Ids mapping
+                    _db.IdMaps.Map<Lesson>(lesson.LessonId, entityId);
 
                     // Create Memento from ReadModel
                     Guid userId = _db.IdMaps.GetAggregateId<User>(lesson.UserId);
@@ -61,15 +66,17 @@ namespace Discitur.Legacy.Migration.Model
                     // Create a fake External event
                     using (var stream = _store.OpenStream(entityId, 0, int.MaxValue))
                     {
-                        stream.Add(new EventMessage { Body = entity });
-                        stream.CommitChanges(Guid.NewGuid());
+                        // Memento Propagation Event
+                        var propagationEvent = new LessonMementoPropagatedEvent(entity);
+
+                        stream.AddMigrationCommit(entity.GetType(), propagationEvent);
+                        //stream.Add(new EventMessage { Body = entity });
+                        //stream.CommitChanges(Guid.NewGuid());
                     }
 
                     // Save Snapshot from entity's Memento image
                     _store.Advanced.AddSnapshot(new Snapshot(entity.Id.ToString(), entity.Version, entity));
 
-                    // Save Ids mapping
-                    _db.IdMaps.Map<Lesson>(lesson.LessonId, entityId);
                     Trace.WriteLine(String.Format("Successfully migrated Lesson id: {0}, Guid: {1}, Title: {2}", lesson.LessonId, entityId.ToString(), lesson.Title), "Migration Process");
                 }
             }
