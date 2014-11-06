@@ -7,6 +7,7 @@ using Discitur.QueryStack.Logic.Services;
 using Discitur.QueryStack.Model;
 using NEventStore;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Transactions;
@@ -18,6 +19,7 @@ namespace Discitur.Legacy.Migration.Model
         private readonly IDatabase _db;
         private readonly IStoreEvents _store;
         private readonly IImageConverter _imageConverter;
+        private IList<string> _logs;
 
         public UserMigration(IDatabase database, IStoreEvents storeEvent, IImageConverter imageConverter)
         {
@@ -27,15 +29,17 @@ namespace Discitur.Legacy.Migration.Model
             _db = database;
             _store = storeEvent;
             _imageConverter = imageConverter;
+            _logs = new List<string>();
         }
 
-        public void Execute()
+        public IList<string> Execute()
         {
             // There's NO UserActivation migration strategy (to avoid complexity in this phase).
             // Before User migration begins, it checks for this assumption
             CanUserMigrationBegin(
                 ExecuteUserMigration
                 );
+            return _logs;
         }
 
         private void CanUserMigrationBegin(Action yesAction)
@@ -82,24 +86,15 @@ namespace Discitur.Legacy.Migration.Model
                     {
                         // Memento Propagation Event
                         var propagationEvent = new UserMementoPropagatedEvent(entity);
-
                         stream.AddMigrationCommit(entity.GetType(), propagationEvent);
-                        //stream.UncommittedHeaders[AggregateTypeHeader] = entity.GetType().FullName.Replace("Memento", "");
-                        //stream.Add(new EventMessage { Body = propagationEvent });
-                        //stream.CommitChanges(Guid.NewGuid());
                     }
-
-                    //// Create a fake External event
-                    //using (var stream = _store.OpenStream(entityId, 0, int.MaxValue))
-                    //{
-                    //    stream.Add(new EventMessage { Body = entity });
-                    //    stream.CommitChanges(Guid.NewGuid());
-                    //}
 
                     // Save Snapshot from entity's Memento image
                     _store.Advanced.AddSnapshot(new Snapshot(entity.Id.ToString(), entity.Version, entity));
 
                     Trace.WriteLine(String.Format("Successfully migrated User id: {0}, Guid: {1}, UserName:{2}", user.UserId, entityId.ToString(), user.UserName), "Migration Process");
+                    _logs.Add(String.Format("{0} - Successfully migrated User id: {1}, Guid: {2}, UserName:{3}", DateTime.Now, user.UserId, entityId.ToString(), user.UserName));
+
                 }
             }
         }

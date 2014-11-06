@@ -66,43 +66,49 @@ namespace Discitur.CommandStack.Logic.CommandHandlers
 
         public void Handle(AddNewCommentCommand command)
         {
-            //TODO: deve diventare un AR??!!...forse
-            Lesson lesson = repo.GetById<Lesson>(command.Id, command.Version);
+            //Lesson lesson = repo.GetById<Lesson>(command.Id, command.Version);
+            Lesson lesson = repo.GetById<Lesson>(command.Id);
             lesson.AddNewComment(command.CommentId, command.AuthorId, command.Content, command.Date, command.ParentId, command.Level);
             repo.Save(lesson, Guid.NewGuid());
         }
 
         public void Handle(EditCommentCommand command)
         {
-            Lesson lesson = repo.GetById<Lesson>(command.Id, command.Version);
+            //Lesson lesson = repo.GetById<Lesson>(command.Id, command.Version);
+            Lesson lesson = repo.GetById<Lesson>(command.Id);
             lesson.EditComment(command.CommentId, command.Content, command.Date);
             repo.Save(lesson, Guid.NewGuid());
         }
 
         public void Handle(DeleteCommentCommand command)
         {
-            Lesson lesson = repo.GetById<Lesson>(command.Id, command.Version);
+            //TODO: the deleteComment needs optmistic lock -> add lesson version!!
+            //Lesson lesson = repo.GetById<Lesson>(command.Id, command.Version);
+            Lesson lesson = repo.GetById<Lesson>(command.Id);
             lesson.DeleteComment(command.CommentId, command.Date);
             repo.Save(lesson, Guid.NewGuid());
         }
 
         public void Handle(AddNewRatingCommand command)
         {
-            Lesson lesson = repo.GetById<Lesson>(command.Id, command.Version);
+            //Lesson lesson = repo.GetById<Lesson>(command.Id, command.Version);
+            Lesson lesson = repo.GetById<Lesson>(command.Id);
             lesson.AddNewRating(command.RatingId, command.Rating, command.UserId, command.Content, command.Date);
             repo.Save(lesson, Guid.NewGuid());
         }
 
         public void Handle(EditRatingCommand command)
         {
-            Lesson lesson = repo.GetById<Lesson>(command.Id, command.Version);
+            //Lesson lesson = repo.GetById<Lesson>(command.Id, command.Version);
+            Lesson lesson = repo.GetById<Lesson>(command.Id);
             lesson.EditRating(command.RatingId, command.Rating, command.Content, command.Date);
             repo.Save(lesson, Guid.NewGuid());
         }
 
         public void Handle(DeleteRatingCommand command)
         {
-            Lesson lesson = repo.GetById<Lesson>(command.Id, command.Version);
+            //Lesson lesson = repo.GetById<Lesson>(command.Id, command.Version);
+            Lesson lesson = repo.GetById<Lesson>(command.Id);
             lesson.DeleteRating(command.RatingId, command.Date);
             repo.Save(lesson, Guid.NewGuid());
         }

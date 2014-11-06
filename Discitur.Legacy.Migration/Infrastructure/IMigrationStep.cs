@@ -1,7 +1,9 @@
-﻿namespace Discitur.Legacy.Migration.Infrastructure
+﻿using System.Collections.Generic;
+
+namespace Discitur.Legacy.Migration.Infrastructure
 {
     public interface IMigrationStep
     {
-        void Execute();
+        IList<string> Execute();
     }
 }

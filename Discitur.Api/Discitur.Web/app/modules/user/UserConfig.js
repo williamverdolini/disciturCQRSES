@@ -12,7 +12,7 @@
     [
         '$httpProvider',
         '$stateProvider',
-        '$urlRouterProvider', 
+        '$urlRouterProvider',
         '$uiViewScrollProvider',
         //'$fileUploader',
         function ($httpProvider, $stateProvider, $urlRouterProvider, $uiViewScrollProvider) {
@@ -44,7 +44,7 @@
                     templateUrl: 'modules/user/UserProfile.html',
                     controller: 'UserProfileCtrl',
                     resolve: {
-                        user: ['AuthService',function (AuthService) {
+                        user: ['AuthService', function (AuthService) {
                             return AuthService.user;
                         }]
                     }
@@ -63,11 +63,10 @@
                     resolve: {
                         activation: function (AuthService, $stateParams) {
                             return AuthService.activate($stateParams).catch(
-                                function (data) { return { notActive: true };}
+                                function (data) { return { notActive: true }; }
                                 );
                         }
                     }
                 })
         }
-    ]
-    );
+    ]);

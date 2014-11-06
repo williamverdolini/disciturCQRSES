@@ -63,6 +63,8 @@
     <Compile Include="Events\EventBus.cs" />
     <Compile Include="Events\IEventHandler.cs" />
     <Compile Include="Events\IEventHandlerFactory.cs" />
+    <Compile Include="Events\Replaying\EventsReplayer.cs" />
+    <Compile Include="Events\Replaying\IEventsReplayer.cs" />
     <Compile Include="Events\Versioning\NewtonsoftJsonSerializer.cs" />
     <Compile Include="Events\Versioning\VersionedEventAttribute.cs" />
     <Compile Include="Events\Versioning\VersionedEventSerializationBinder.cs" />

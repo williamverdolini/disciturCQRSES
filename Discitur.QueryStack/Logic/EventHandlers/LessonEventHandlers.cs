@@ -21,7 +21,8 @@ namespace Discitur.QueryStack.Logic.EventHandlers
         IEventHandler<DeletedCommentEvent>,
         IEventHandler<AddedNewRatingEvent>,
         IEventHandler<EditedRatingEvent>,
-        IEventHandler<DeletedRatingEvent>
+        IEventHandler<DeletedRatingEvent>,
+        IEventHandler<LessonMementoPropagatedEvent>
     {
         private readonly IIdentityMapper _identityMapper;
 
@@ -164,61 +165,6 @@ namespace Discitur.QueryStack.Logic.EventHandlers
                             lesson.Tags.Remove(item);
                             db.LessonTags.Remove(item);
                         });
-//                // update existing feedbacks
-//                foreach (var item in @event.FeedBacks)
-//                {
-//                    LessonFeedback mfb;
-//                    if (item.Id <= 0)
-//                    {
-//                        mfb = new LessonFeedback()
-//                        {
-////                            LessonId = lessonId,
-//                            Feedback = item.Feedback,
-////                            LessonFeedbackId = item.Id,
-//                            Nature = item.Nature
-//                        };
-//                        lesson.FeedBacks.Add(mfb);
-//                    }
-//                    else
-//                    {
-//                        mfb = lesson.FeedBacks.FirstOrDefault(f => f.LessonFeedbackId.Equals(item.Id));
-//                        if (mfb != null && mfb.Feedback != item.Feedback)
-//                        {
-//                            mfb.Feedback = item.Feedback;
-//                            db.Entry(mfb).State = EntityState.Modified;
-//                        }
-//                    }
-//                }
-                //// remove deleted feedbacks
-                //// deleted feedbacks exist in lesson.FeedBacks, but nt exit in @event.FeeBack
-                //lesson.FeedBacks
-                //    .Where(f => !@event.FeedBacks.Any(efb => efb.Id.Equals(f.LessonFeedbackId)))
-                //    .ToList()
-                //    .ForEach(item => db.LessonFeedbacks.Remove(item));
-
-                //// remove deleted tags
-                //// deleted tags exist in lesson.Tags, but nt exit in @event.Tags
-                //lesson.Tags
-                //    .Where(t => !@event.Tags.Any(et => et.LessonTagName.Equals(t.LessonTagName)))
-                //    .ToList()
-                //    .ForEach(item => db.LessonTags.Remove(item));
-                //// add new tags
-                //foreach (var item in @event.Tags)
-                //{
-                //    LessonTag t = lesson.Tags.FirstOrDefault(_t => _t.LessonId.Equals(lesson.LessonId) && _t.LessonTagName.Equals(item.LessonTagName));
-                //    if (t == null)
-                //    {
-                //        LessonTag tag = new LessonTag();
-                //        //tag.LessonId = lesson.LessonId;
-                //        tag.LessonTagName = item.LessonTagName;
-                //        //db.LessonTags.Add(tag);
-                //        lesson.Tags.Add(tag);
-                //    }
-                //}
-
-                //lesson.LastModifUser = lesson.LastModifUser;
-                //lesson.LastModifDate = @event.ModificationDate;
-                //lesson.Vers = @event.Version;
                 UpdateLessonArchFields(lesson, lesson.LastModifUser, @event.ModificationDate, @event.Version);
 
                 db.Entry(lesson).State = EntityState.Modified;
@@ -475,5 +421,100 @@ namespace Discitur.QueryStack.Logic.EventHandlers
                 return ratingsList.Count > 0 ? Math.Max((int)Math.Round(ratingsList.Average()), 1) : 0;
             }
         }
+
+        public void Handle(LessonMementoPropagatedEvent @event)
+        {
+            using (var db = new DisciturContext())
+            {
+                int itemId = _identityMapper.GetModelId<Lesson>(@event.Memento.Id);
+                if (itemId.Equals(0))
+                {
+                    int userId = _identityMapper.GetModelId<User>(@event.Memento.AuthorId);
+                    User _user = db.Users.Find(userId);
+
+                    Lesson lesson = new Lesson();
+                    lesson.Title = @event.Memento.Title;
+                    lesson.Discipline = @event.Memento.Discipline;
+                    lesson.School = @event.Memento.School;
+                    lesson.Classroom = @event.Memento.Classroom;
+                    lesson.Author = _user;
+                    lesson.UserId = _user.UserId;
+                    lesson.Content = @event.Memento.Content;
+                    lesson.Conclusion = @event.Memento.Conclusion;
+                    lesson.PublishDate = @event.Memento.CreationDate;
+                    lesson.CreationDate = @event.Memento.CreationDate;
+                    UpdateLessonArchFields(lesson, _user.UserName, @event.Memento.CreationDate, @event.Memento.Version);
+                    //lesson.LastModifDate = @event.CreationDate;
+                    //lesson.LastModifUser = _user.UserName;
+                    //lesson.Vers = 1;
+                    lesson.RecordState = Constants.RECORD_STATE_ACTIVE;
+
+                    // Create FeedBacks Collection
+                    @event.Memento.FeedBacks.ToList()
+                        .ForEach(feedback => {
+                                LessonFeedback fb = new LessonFeedback()
+                                {
+                                    Feedback = feedback.Feedback,
+                                    Nature = feedback.Nature,
+                                    LessonFeedbackGuid = feedback.Id
+                                };
+                                lesson.FeedBacks.Add(fb);                    
+                        });
+
+                    // Create Tags Collection
+                    @event.Memento.Tags.ToList()
+                            .ForEach(tag =>
+                            {
+                                LessonTag t = new LessonTag()
+                                {
+                                    LessonTagName = tag.LessonTagName
+                                };
+                                lesson.Tags.Add(t);
+                            });
+
+                    db.Lessons.Add(lesson);
+                    db.SaveChanges();
+                    //Ids mapping
+                    _identityMapper.Map<Lesson>(lesson.LessonId, @event.Memento.Id);
+                    if (lesson.FeedBacks.Count > 0)
+                        lesson.FeedBacks.ToList()
+                            .ForEach(feedback => _identityMapper.Map<LessonFeedback>(feedback.LessonFeedbackId, feedback.LessonFeedbackGuid));
+
+                    // Create Ratings Collection
+                    List<int> ratingsList = new List<int>();
+                    @event.Memento.Ratings.ToList()
+                        .ForEach(r =>
+                        {
+                            int authorId = _identityMapper.GetModelId<User>(r.UserId);
+                            User author = db.Users.Find(userId);
+                            ratingsList.Add(r.Rating);
+                            LessonRating rating = new LessonRating()
+                            {
+                                LessonId = lesson.LessonId,
+                                UserId = authorId,
+                                Author = author,
+                                Rating = r.Rating,
+                                Content = r.Content ?? string.Empty,
+                                CreationDate = r.CreationDate,
+                                LastModifDate = r.LastModifDate,
+                                LastModifUser = r.LastModifUser,
+                                Vers = r.Vers,
+                                RecordState = Constants.RECORD_STATE_ACTIVE
+                            };
+                            // Add new Lesson's Rating
+                            db.LessonRatings.Add(rating);
+                            db.SaveChanges();
+                            _identityMapper.Map<LessonRating>(rating.Id, r.Id);
+                        });
+
+                    lesson.Rate = ratingsList.Count > 0 ? Math.Max((int)Math.Round(ratingsList.Average()), 1) : 0;
+                    // Persist changes
+                    db.Entry(lesson).State = EntityState.Modified;
+                    db.SaveChanges(); 
+                }
+                // otherwise it could be used for maintenance purposes
+            }
+        }
+        
     }
 }

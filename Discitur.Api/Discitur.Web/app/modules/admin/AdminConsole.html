@@ -5,3 +5,19 @@
         </h5>
     </div>
 </div>
+<div class="row">
+    <div class="col-lg-12">
+        <h5>
+            <!--<a class="btn btn-warning" ng-click="actions.clearReadModel()">{{labels.clearReadModel}}</a>-->
+            <a class="btn btn-warning" ng-click="actions.replayEvents()">{{labels.replayEvents}}</a>
+        </h5>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-12">
+        <div class="bs-callout bs-callout-info alert-dismissible" ng-show="local.log.show">
+            <button type="button" class="close" ng-click="local.log.show=false"><span aria-hidden="true">&times;</span></button>
+            <div ng-repeat="log in local.log.messages">{{log}}</div>
+        </div>
+    </div>
+</div>

@@ -219,7 +219,7 @@
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\LessonController.cs" />
-    <Compile Include="Controllers\MigrationController.cs" />
+    <Compile Include="Controllers\AdminController.cs" />
     <Compile Include="Controllers\SEOLessonController.cs" />
     <Compile Include="Controllers\UserController.cs" />
     <Compile Include="Filters\ValidationModelActionFilter.cs" />

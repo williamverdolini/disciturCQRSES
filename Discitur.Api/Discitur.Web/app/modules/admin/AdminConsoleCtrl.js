@@ -4,14 +4,14 @@
         'DisciturBaseCtrl',
         '$injector',
         'AdminService',
-        'AuthService',
+        'user',
         '$state',
         function (
             $scope,
             DisciturBaseCtrl,
             $injector,
             AdminService,
-            AuthService,
+            user,
             $state
             ) {
             // inherit Discitur Base Controller
@@ -24,19 +24,54 @@
             //--------- public properties ------
             $scope.labels = {
                 adminMigrate3Layer2CqrsEs: $scope.getLabel('adminMigrate3Layer2CqrsEs'),
+                clearReadModel: $scope.getLabel('clearReadModel'),
+                replayEvents: $scope.getLabel('replayEvents')
             };
 
             $scope.local = {
-                user: AuthService.user
+                user: user,
+                log: {
+                    show: false,
+                    messages: null
+                }
             }
             //-------- public methods -------
             $scope.actions = {
                 migrate: function () {
                     AdminService.migrate().then(
                         //TODO: add success/error message
-                        function() { },
-                        function() { }
-                        );
+                        function (data) {
+                            $scope.local.log.messages = data;
+                            $scope.local.log.show = true;
+                        },
+                        function (data) {
+                            $scope.local.log.messages = data;
+                            $scope.local.log.show = true;
+                        });
+                },
+                //clearReadModel: function () {
+                //    AdminService.clearReadModel().then(
+                //        //TODO: add success/error message
+                //        function (data) {
+                //            $scope.local.log.messages = data;
+                //            $scope.local.log.show = true;
+                //        },
+                //        function (data) {
+                //            $scope.local.log.messages = data;
+                //            $scope.local.log.show = true;
+                //        });
+                //},
+                replayEvents: function () {
+                    AdminService.replayEvents().then(
+                        //TODO: add success/error message
+                        function (data) {
+                            $scope.local.log.messages = data;
+                            $scope.local.log.show = true;
+                        },
+                        function (data) {
+                            $scope.local.log.messages = data;
+                            $scope.local.log.show = true;
+                        });
                 }
             }
             //--------- Controller initialization ------

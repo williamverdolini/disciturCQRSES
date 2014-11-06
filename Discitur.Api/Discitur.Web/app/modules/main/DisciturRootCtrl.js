@@ -27,30 +27,52 @@
                 return _message;
             }
 
-            // dynamic callback for change start event
-            var changeStartCallbacks = [
-                // 1. Initialize Authentication Data e delete itself
-                function (event) {
-                    //event.preventDefault();
-                    AuthService.resolveAuth()['finally'](function () {
-                        // http://angular-ui.github.io/ui-router/site/#/api/ui.router.router.$urlRouter
-                        // Continue with the update and state transition if logic allows
-                        //$urlRouter.sync();
-                        // Force again sync because $location.path() is not updated with "otherwise route"
-                        //$urlRouter.sync();
-                    });
-                    changeStartCallbacks.splice(0, 1);
 
-                },
-                // 2. Manage authorized states
-                function (event, toState, toParams, fromState, fromParams) {
-                    if (toState.authorized && !AuthService.user.isLogged) {
-                        // event preventDefault to stop the flow and redirect
-                        //event.preventDefault();
-                        $state.go('lessonSearch');
-                    }
+            var manageAuthorizedRoutes = function (event, toState, toParams, fromState, fromParams) {
+                if (toState.authorized && !AuthService.user.isLogged) {
+                    // event preventDefault to stop the flow and redirect
+                    //event.preventDefault();
+                    $state.go('lessonSearch');
                 }
-            ]
+            }
+
+            // 1. Initialize Authentication Data e delete itself
+            var resolveAuth = function (event) {
+                event.preventDefault();
+                AuthService.resolveAuth()['finally'](function () {
+                    // http://angular-ui.github.io/ui-router/site/#/api/ui.router.router.$urlRouter
+                    // Continue with the update and state transition if logic allows
+                    $urlRouter.sync();
+                });
+                changeStartCallbacks = manageAuthorizedRoutes;
+            }
+
+            // dynamic callback for change start event
+            var changeStartCallbacks = resolveAuth;
+
+            //// dynamic callback for change start event
+            //var changeStartCallbacks = [
+            //    // 1. Initialize Authentication Data e delete itself
+            //    function (event) {
+            //        //event.preventDefault();
+            //        AuthService.resolveAuth()['finally'](function () {
+            //            // http://angular-ui.github.io/ui-router/site/#/api/ui.router.router.$urlRouter
+            //            // Continue with the update and state transition if logic allows
+            //            //$urlRouter.sync();
+            //            // Force again sync because $location.path() is not updated with "otherwise route"
+            //            //$urlRouter.sync();
+            //        });
+            //        changeStartCallbacks.splice(0, 1);
+            //    },
+            //    // 2. Manage authorized states
+            //    function (event, toState, toParams, fromState, fromParams) {
+            //        if (toState.authorized && !AuthService.user.isLogged) {
+            //            // event preventDefault to stop the flow and redirect
+            //            //event.preventDefault();
+            //            $state.go('lessonSearch');
+            //        }
+            //    }
+            //]
 
             //-------- public properties -------
             $scope.labels = {
@@ -65,7 +87,8 @@
                 // reset title
                 var _cTitle = $scope.getLabel('appTitle') + (toState.title ? ' | ' + $scope.getLabel(toState.title) : '');
                 $scope.labels.appTitle = _cTitle;
-                changeStartCallbacks[0](event, toState, toParams, fromState, fromParams);
+                //changeStartCallbacks[0](event, toState, toParams, fromState, fromParams);
+                changeStartCallbacks(event, toState, toParams, fromState, fromParams);
             });
             $rootScope.$on('$stateChangeSuccess', function (event, toState, toParams, fromState, fromParams) {
                 //console.log("$stateChangeSuccess")

@@ -2,6 +2,7 @@
 using Castle.MicroKernel.SubSystems.Configuration;
 using Castle.Windsor;
 using Discitur.Infrastructure.Events;
+using Discitur.Infrastructure.Events.Replaying;
 using Discitur.QueryStack;
 using Discitur.QueryStack.Logic.EventHandlers;
 using Discitur.QueryStack.Logic.Services;
@@ -25,6 +26,10 @@ namespace Discitur.Api.Injection.Installers
             container.Register(Component.For<IDatabase>().ImplementedBy<Database>().LifestyleTransient());            
             container.Register(Component.For<IIdentityMapper>().ImplementedBy<IdentityMapper>().LifestyleTransient());
             container.Register(Component.For<IImageConverter>().ImplementedBy<ImageConverter>().LifestyleTransient());
+
+            // DI Registration for Events Replaying
+            container.Register(Component.For<IEventsReplayer>().ImplementedBy<EventsReplayer>().LifestyleTransient());
+            container.Register(Component.For<IAdminDatabase>().ImplementedBy<AdminDatabase>().LifestyleTransient());
         }
     }
 }

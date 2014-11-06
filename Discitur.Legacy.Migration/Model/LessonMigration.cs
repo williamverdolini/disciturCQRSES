@@ -16,6 +16,7 @@ namespace Discitur.Legacy.Migration.Model
     {
         private readonly IDatabase _db;
         private readonly IStoreEvents _store;
+        private IList<string> _logs;
 
         public LessonMigration(IDatabase database, IStoreEvents storeEvent)
         {
@@ -23,9 +24,10 @@ namespace Discitur.Legacy.Migration.Model
             Contract.Requires<ArgumentNullException>(storeEvent != null, "storeEvent");
             _db = database;
             _store = storeEvent;
+            _logs = new List<string>();
         }
 
-        public void Execute()
+        public IList<string> Execute()
         {
             foreach (var lesson in _db.Lessons.ToList())
             {
@@ -77,9 +79,10 @@ namespace Discitur.Legacy.Migration.Model
                     // Save Snapshot from entity's Memento image
                     _store.Advanced.AddSnapshot(new Snapshot(entity.Id.ToString(), entity.Version, entity));
 
-                    Trace.WriteLine(String.Format("Successfully migrated Lesson id: {0}, Guid: {1}, Title: {2}", lesson.LessonId, entityId.ToString(), lesson.Title), "Migration Process");
+                    _logs.Add(String.Format("{0} - Successfully migrated Lesson id: {1}, Guid: {2}, Title:{3}", DateTime.Now, lesson.LessonId, entityId.ToString(), lesson.Title));
                 }
             }
+            return _logs;
         }
 
         private ICollection<Domain.Model.LessonFeedback> GetLessonFeedbacks(Lesson lesson)

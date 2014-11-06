@@ -82,6 +82,8 @@
         userImageSize: "Dimensione:",
         userAdministration: "Amministratore",
         adminMigrate3Layer2CqrsEs: "Migrazione da 3-Layer a CQRS+ES",
+        clearReadModel: "Resetta il Read-Model",
+        replayEvents: "Rigenera il Read-Model",
 
         editLessonButton: "Modifica",
         requiredField: "Dato obbligario",

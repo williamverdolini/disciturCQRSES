@@ -1,6 +1,7 @@
 ﻿using Discitur.Infrastructure;
 using Discitur.Legacy.Migration.Logic;
 using System;
+using System.Collections.Generic;
 
 namespace Discitur.Legacy.Migration.Worker
 {
@@ -14,9 +15,9 @@ namespace Discitur.Legacy.Migration.Worker
             _migrator = migrator;
         }
 
-        public void ExecuteMigration()
+        public IList<string> ExecuteMigration()
         {
-            _migrator.ExecuteMigration();
+            return _migrator.ExecuteMigration();
         }
 
     }

@@ -96,7 +96,8 @@ namespace Discitur.CommandStack.Logic.Validators
 
         private bool BeNotSubmittedBySameUser(AddNewRatingCommand command, Guid userId)
         {
-            Lesson lesson = repo.GetById<Lesson>(command.Id, command.Version);
+            //Lesson lesson = repo.GetById<Lesson>(command.Id, command.Version);
+            Lesson lesson = repo.GetById<Lesson>(command.Id);
             return !lesson.Ratings.Any(r => r.UserId.Equals(userId) && r.RecordState.Equals(Constants.RECORD_STATE_ACTIVE));
 
         }

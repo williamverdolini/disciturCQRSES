@@ -1,5 +1,6 @@
 ﻿using Discitur.Legacy.Migration.Infrastructure.Exceptions;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 
@@ -8,6 +9,7 @@ namespace Discitur.Legacy.Migration.Infrastructure
     public class MigrationProcess
     {
         private readonly IList<IMigrationStep> _steps;
+        private List<string> _migrationLogs;
         static private Status _status = Status.Off;
 
         private enum Status
@@ -19,16 +21,17 @@ namespace Discitur.Legacy.Migration.Infrastructure
             Error
         }
 
-        protected MigrationProcess(IList<IMigrationStep> steps)
+        protected MigrationProcess(IList<IMigrationStep> steps, IList<string> _logs)
         {
             _steps = steps;
+            _migrationLogs = (List<string>)_logs;
         }
 
         /// <summary>
         /// Initialize and create Migration Process container
         /// </summary>
         /// <returns></returns>
-        public static MigrationProcess Init()
+        public static MigrationProcess Init(IList<string> _logs)
         {
             if (!_status.Equals(Status.Off))
             {
@@ -36,7 +39,7 @@ namespace Discitur.Legacy.Migration.Infrastructure
             }
             _status = Status.Initializing;
             var _steps = new List<IMigrationStep>();
-            return new MigrationProcess(_steps);
+            return new MigrationProcess(_steps, _logs);
         }
 
         /// <summary>
@@ -68,20 +71,23 @@ namespace Discitur.Legacy.Migration.Infrastructure
         /// <summary>
         /// Execute Migration's steps
         /// </summary>
-        public void Execute()
+        public IList<string> Execute()
         {
             if (!_status.Equals(Status.Configured))
             {
                 throw new Exception("Migration Process cannot start because it is not on Configured status! Current status is " + _status);
             }
             _status = Status.Executing;
+            _migrationLogs.Add(string.Format("{0} - Migration Process begins...", DateTime.Now));
             Trace.WriteLine("Migration Process begins...","Migration Process");
             try
             {
                 foreach (var step in _steps)
                 {
+                    _migrationLogs.Add(string.Format("{0} - Migration Process - step: {1} begins...", DateTime.Now, step.GetType().Name));
                     Trace.WriteLine(String.Format("Migration Process - step: {0} begins...", step.GetType().Name), "Migration Process");
-                    step.Execute();
+                    _migrationLogs.AddRange( step.Execute());
+                    _migrationLogs.Add(string.Format("{0} - Migration Process - step: {1} completed...", DateTime.Now, step.GetType().Name));
                     Trace.WriteLine(String.Format("Migration Process - step: {0} completed...", step.GetType().Name), "Migration Process");
                 }
             }
@@ -91,8 +97,10 @@ namespace Discitur.Legacy.Migration.Infrastructure
                 Trace.WriteLine(String.Format("Migration Process exit: {0}", ex.Message), "Migration Process");
                 throw;
             }
+            _migrationLogs.Add(string.Format("{0} - Migration Process successfully completed.", DateTime.Now));
             Trace.WriteLine("Migration Process successfully completed.", "Migration Process");
             _status = Status.Off;
+            return _migrationLogs;
         }
     }
 

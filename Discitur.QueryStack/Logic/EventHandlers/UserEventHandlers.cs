@@ -110,8 +110,12 @@ namespace Discitur.QueryStack.Logic.EventHandlers
                 {
                     // User not exists
                     // Add new User to Read-Model
-                    var _picture = @event.Memento.Picture != null ? "data:image/gif;base64," + _imageConverter.ToPictureString(@event.Memento.Picture) : Constants.USER_DEFAULT_PICTURE;
-                    var _thumb = @event.Memento.Picture != null ? "data:image/gif;base64," + _imageConverter.ToThumbNailString(@event.Memento.Picture) : null;
+                    //var _picture = @event.Memento.Picture != null ? "data:image/gif;base64," + _imageConverter.ToPictureString(@event.Memento.Picture) : Constants.USER_DEFAULT_PICTURE;
+                    //var _thumb = @event.Memento.Picture != null ? "data:image/gif;base64," + _imageConverter.ToThumbNailString(@event.Memento.Picture) : null;
+                    var _picture = @event.Memento.Picture != null ? "data:image/gif;base64," + Convert.ToBase64String(@event.Memento.Picture) : Constants.USER_DEFAULT_PICTURE;
+                    var _thumb = @event.Memento.Picture != null ? "data:image/gif;base64," + Convert.ToBase64String(@event.Memento.Picture) : null;
+                    //var _picture = @event.Memento.Picture != null ? _imageConverter.ToPictureString(@event.Memento.Picture) : Constants.USER_DEFAULT_PICTURE;
+                    //var _thumb = @event.Memento.Picture != null ? _imageConverter.ToThumbNailString(@event.Memento.Picture) : null;
 
                     User discuser = new User
                     {
@@ -135,7 +139,7 @@ namespace Discitur.QueryStack.Logic.EventHandlers
                         db.UserActivations.Add(userActivation);
                     }
                     db.SaveChanges();
-                    _identityMapper.Map<User>(discuser.UserId, @event.Id);
+                    _identityMapper.Map<User>(discuser.UserId, @event.Memento.Id);
                 }
                 // otherwise it could be used for maintenance purposes
             }

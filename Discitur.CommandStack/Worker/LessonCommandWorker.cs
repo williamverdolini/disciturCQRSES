@@ -25,64 +25,6 @@ namespace Discitur.CommandStack.Worker
             repo = repository;
         }
 
-        //private ICollection<LessonFeedback> ToLessonFeedbackCommands(ICollection<FeedbackViewModel> feedBackViewModel)
-        //{
-        //    ICollection<LessonFeedback> feedbacks = new HashSet<LessonFeedback>();
-        //    foreach (var item in feedBackViewModel.Where(f => !f.Status.Equals(Discitur.Domain.Common.Constants.LESSON_FEEDBACK_REMOVED)))
-        //    {
-        //        LessonFeedback fb = new LessonFeedback()
-        //        {
-        //            Feedback = item.Feedback,
-        //            Id = item.LessonFeedbackId ?? 0,
-        //            Nature = item.Nature
-        //        };
-        //        _feedbacks.Add(fb);
-        //    }
-
-        //    return feedbacks;
-        //}
-
-
-        /// <summary>
-        /// Create a Lookup collection to get New/Modified/Removed Lesson's feedbacks
-        /// </summary>
-        /// <param name="feedBacks"></param>
-        /// <returns></returns>
-        //private ILookup<EntityStatus, LessonFeedback> ToLessonFeedbacks(ICollection<FeedbackViewModel> feedBacks)
-        //{
-        //    ILookup<EntityStatus, LessonFeedback> _feedbacks = (Lookup<EntityStatus, LessonFeedback>)feedBacks
-        //        .ToLookup(
-        //            f => f.Status.ParseEnum<EntityStatus>(),
-        //            f => new LessonFeedback()
-        //                {
-        //                    Id = f.LessonFeedbackId == null ? 
-        //                            Guid.NewGuid() : database.IdMaps.GetAggregateId<LessonFeedback>(f.LessonFeedbackId.Value),
-        //                    Feedback = f.Feedback,
-        //                    Nature = f.Nature
-        //                }
-        //        );
-        //    return _feedbacks;
-        //}
-
-        /// <summary>
-        /// Create a Lookup collection to get New/Modified/Removed Lesson's tags
-        /// </summary>
-        /// <param name="tags"></param>
-        /// <returns></returns>
-        //private ILookup<EntityStatus, LessonTag> ToLessonTag(ICollection<TagViewModel> tags)
-        //{
-        //    ILookup<EntityStatus, LessonTag> _tags = (Lookup<EntityStatus, LessonTag>)tags
-        //        .ToLookup(
-        //            t => t.Status.ParseEnum<EntityStatus>(),
-        //            t => new LessonTag()
-        //            {
-        //                LessonTagName = t.LessonTagName
-        //            }
-        //        );
-        //    return _tags;
-        //}
-
-
         public void SaveNewDraftLesson(SaveDraftLessonViewModel model)
         {
             Guid authorId = database.IdMaps.GetAggregateId<User>(model.Author.UserId);

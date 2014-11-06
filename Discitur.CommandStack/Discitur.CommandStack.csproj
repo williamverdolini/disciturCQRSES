@@ -53,6 +53,8 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ViewModel\LessonViewModels.cs" />
     <Compile Include="ViewModel\UserViewModels.cs" />
+    <Compile Include="Worker\AdminCommandWorker.cs" />
+    <Compile Include="Worker\IAdminCommandWorker.cs" />
     <Compile Include="Worker\ILessonCommandWorker.cs" />
     <Compile Include="Worker\IUserCommandWorker.cs" />
     <Compile Include="Worker\LessonCommandWorker.cs" />
