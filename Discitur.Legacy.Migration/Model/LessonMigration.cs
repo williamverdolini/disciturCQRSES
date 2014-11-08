@@ -70,10 +70,7 @@ namespace Discitur.Legacy.Migration.Model
                     {
                         // Memento Propagation Event
                         var propagationEvent = new LessonMementoPropagatedEvent(entity);
-
                         stream.AddMigrationCommit(entity.GetType(), propagationEvent);
-                        //stream.Add(new EventMessage { Body = entity });
-                        //stream.CommitChanges(Guid.NewGuid());
                     }
 
                     // Save Snapshot from entity's Memento image

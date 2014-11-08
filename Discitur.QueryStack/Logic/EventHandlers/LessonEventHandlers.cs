@@ -508,6 +508,40 @@ namespace Discitur.QueryStack.Logic.EventHandlers
                         });
 
                     lesson.Rate = ratingsList.Count > 0 ? Math.Max((int)Math.Round(ratingsList.Average()), 1) : 0;
+
+                    // Create Comments Collection
+                    @event.Memento.Comments.ToList()
+                        .ForEach(c =>
+                        {
+                            // get read-model Ids (ID-maps)
+                            int _userId = _identityMapper.GetModelId<User>(c.AuthorId);
+                            int? parentId = c.ParentId == null ? null : (int?)_identityMapper.GetModelId<LessonComment>(c.ParentId.Value);
+                            // get involved read-model entities 
+                            User author = db.Users.Find(userId);
+
+                            // Create new Read-Model Lesson's Comment
+                            LessonComment comment = new LessonComment() 
+                            {
+                                LessonId = lesson.LessonId,
+                                Content = c.Content,
+                                CreationDate = c.CreationDate,
+                                Date = c.Date,
+                                LastModifDate = c.Date,
+                                Level = c.Level,
+                                ParentId = parentId,
+                                Vers = c.Vers,
+                                RecordState = Constants.RECORD_STATE_ACTIVE,
+                                UserId = _userId,
+                                Author = author,
+                                LastModifUser = author.UserName
+                            };
+                            db.LessonComments.Add(comment);
+                            db.SaveChanges();
+                            // Map new IDs
+                            // NOTE: Comment is NOT and AR, but it's mapped with it's own Id-map for compatibility with existant read-model
+                            _identityMapper.Map<LessonComment>(comment.Id, c.Id);
+                        });
+
                     // Persist changes
                     db.Entry(lesson).State = EntityState.Modified;
                     db.SaveChanges(); 
