@@ -110,12 +110,15 @@ namespace Discitur.QueryStack.Logic.EventHandlers
                 {
                     // User not exists
                     // Add new User to Read-Model
-                    //var _picture = @event.Memento.Picture != null ? "data:image/gif;base64," + _imageConverter.ToPictureString(@event.Memento.Picture) : Constants.USER_DEFAULT_PICTURE;
-                    //var _thumb = @event.Memento.Picture != null ? "data:image/gif;base64," + _imageConverter.ToThumbNailString(@event.Memento.Picture) : null;
-                    var _picture = @event.Memento.Picture != null ? "data:image/gif;base64," + Convert.ToBase64String(@event.Memento.Picture) : Constants.USER_DEFAULT_PICTURE;
-                    var _thumb = @event.Memento.Picture != null ? "data:image/gif;base64," + Convert.ToBase64String(@event.Memento.Picture) : null;
-                    //var _picture = @event.Memento.Picture != null ? _imageConverter.ToPictureString(@event.Memento.Picture) : Constants.USER_DEFAULT_PICTURE;
-                    //var _thumb = @event.Memento.Picture != null ? _imageConverter.ToThumbNailString(@event.Memento.Picture) : null;
+                    string _picture = Constants.USER_DEFAULT_PICTURE;
+                    string _thumb = null;
+                    if (@event.Memento.Picture != null)
+                    {
+                        char[] bytes = new char[@event.Memento.Picture.Length * sizeof(byte)];
+                        System.Buffer.BlockCopy(@event.Memento.Picture, 0, bytes, 0, bytes.Length);
+                        var _str = new string(bytes);
+                        _picture = _thumb = _str;
+                    }
 
                     User discuser = new User
                     {
