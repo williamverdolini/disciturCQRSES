@@ -1,11 +1,13 @@
 ﻿using Castle.MicroKernel.Registration;
 using Castle.MicroKernel.SubSystems.Configuration;
 using Castle.Windsor;
+using Discitur.Infrastructure.Api;
 using Discitur.Infrastructure.Events;
 using Discitur.Infrastructure.Events.Replaying;
 using Discitur.QueryStack;
 using Discitur.QueryStack.Logic.EventHandlers;
 using Discitur.QueryStack.Logic.Services;
+using Discitur.QueryStack.Worker;
 
 namespace Discitur.Api.Injection.Installers
 {
@@ -30,6 +32,15 @@ namespace Discitur.Api.Injection.Installers
             // DI Registration for Events Replaying
             container.Register(Component.For<IEventsReplayer>().ImplementedBy<EventsReplayer>().LifestyleTransient());
             container.Register(Component.For<IAdminDatabase>().ImplementedBy<AdminDatabase>().LifestyleTransient());
+
+            // DI Registration for Query Worker Services
+            container.Register(
+                Classes
+                .FromAssemblyContaining<LessonQueryWorker>()
+                .BasedOn(typeof(IQueryWorker))      // That implement IQueryWorker Interface
+                .WithService.DefaultInterfaces()    // in its hierarchy
+                .LifestyleTransient()
+                );
         }
     }
 }

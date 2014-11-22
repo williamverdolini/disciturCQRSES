@@ -48,6 +48,7 @@
   <ItemGroup>
     <Compile Include="Logic\CommandHandlers\LessonCommandHandlers.cs" />
     <Compile Include="Logic\CommandHandlers\UserCommandHandlers.cs" />
+    <Compile Include="Logic\Sagas\UserCreditsSagaEventHandlers.cs" />
     <Compile Include="Logic\Validators\LessonValidators.cs" />
     <Compile Include="Logic\Validators\UserValidators.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

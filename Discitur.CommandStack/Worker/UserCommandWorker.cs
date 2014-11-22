@@ -25,29 +25,33 @@ namespace Discitur.CommandStack.Worker
         public void RegisterUser(RegisterUserViewModel model)
         {
             RegisterUserCommand command = new RegisterUserCommand(model.Name, model.Surname, model.Email, model.UserName);
-            bus.Send<RegisterUserCommand>(command);
+            bus.Send(command);
             model.ActivationKey = command.Id.ToString();
             //string _newId = database.IdMaps.GetModelId<User>(command.Id).ToString();
-
         }
 
         public void ActivateUser(ActivateUserViewModel model)
         {
-            bus.Send<ActivateUserCommand>(new ActivateUserCommand(model.UserName, model.Key));
+            bus.Send(new ActivateUserCommand(model.UserName, model.Key));
         }
 
         public void ChangeUserEmail(ChangeUserEmailViewModel model)
         {
             Guid userId = database.IdMaps.GetAggregateId<User>(model.UserId);
-            bus.Send<ChangeUserEmailCommand>(new ChangeUserEmailCommand(userId, model.Email, model.UserName));
+            bus.Send(new ChangeUserEmailCommand(userId, model.Email, model.UserName));
         }
 
         public void ChangeUserPicture(ChangeUserPictureViewModel model)
         {
             Guid userId = database.IdMaps.GetAggregateId<User>(model.UserId);
-            bus.Send<ChangeUserPictureCommand>(new ChangeUserPictureCommand(userId, model.Picture));
+            bus.Send(new ChangeUserPictureCommand(userId, model.Picture));
         }
 
+        public void LogInUser(int _userId, DateTime date)
+        {
+            Guid userId = database.IdMaps.GetAggregateId<User>(_userId);
+            bus.Send(new LogInUserCommand(userId, date));
+        }
         #endregion
     }
 }

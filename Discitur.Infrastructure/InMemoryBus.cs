@@ -2,6 +2,7 @@
 using NEventStore.Dispatcher;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using Discitur.Infrastructure.Commands;
 using Discitur.Infrastructure.Events;
@@ -14,6 +15,9 @@ namespace Discitur.Infrastructure
         private readonly IEventHandlerFactory _eventHandlerfactory;
         private readonly ICommandValidatorFactory _commandValidatorFactory;
         private IList<Type> _registeredEventHandlers;
+        // Saga Management Constants
+        private const string SagaTypeHeader = "SagaType";
+        private const string UndispatchedMessageHeader = "UndispatchedMessage.";
 
         public InMemoryBus(ICommandHandlerFactory commandHandlerFactory, IEventHandlerFactory eventHandlerFactory, ICommandValidatorFactory commandValidatorFactory)
         {
@@ -92,11 +96,29 @@ namespace Discitur.Infrastructure
         {
             Contract.Requires<ArgumentNullException>(commit != null, "commit");
 
-            // Dispatch to Event Bus Implementation
-            foreach (var @event in commit.Events)
+            bool commitIsAboutSaga = commit.Headers.ContainsKey(SagaTypeHeader);
+
+            if (!commitIsAboutSaga)
             {
-                //Run-time conversion for typed event
-                Publish((dynamic)@event.Body);
+                // Dispatch to Event Bus Implementation
+                foreach (var @event in commit.Events)
+                {
+                    //Run-time conversion for typed event
+                    Publish((dynamic)@event.Body);
+                }
+            }
+            // Commands dispatched from sagas
+            if (commitIsAboutSaga)
+            {
+                var commands = commit
+                    .Headers
+                    .Where(h => h.Key.StartsWith(UndispatchedMessageHeader)).Select(h => h.Value)
+                    .ToArray();
+                if (commands.Any())
+                {
+                    foreach (var command in commands)
+                        (this as IBus).Send(command);
+                }
             }
         }
         #endregion

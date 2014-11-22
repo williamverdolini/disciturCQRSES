@@ -74,6 +74,8 @@
     <Compile Include="InMemoryBus.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="NEventStoreExtensions.cs" />
+    <Compile Include="Sagas\InMemorySagaIdStore.cs" />
+    <Compile Include="Sagas\ISagaIdStore.cs" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>

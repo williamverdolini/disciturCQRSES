@@ -60,4 +60,25 @@ namespace Discitur.Domain.Messages.Commands
         }
     }
 
+    public class LogInUserCommand : Command
+    {
+        public DateTime Date { get; private set; }
+
+        public LogInUserCommand(Guid id, DateTime date)
+        {
+            Id = id;
+            Date = date;
+        }
+    }
+
+    public class AchieveAffecionatedUserBadgeCommand : Command
+    {
+        public DateTime Date { get; private set; }
+
+        public AchieveAffecionatedUserBadgeCommand(Guid id, DateTime date)
+        {
+            Id = id;
+            Date = date;
+        }
+    }
 }

@@ -8,15 +8,13 @@ using CommonDomain.Persistence.EventStore;
 using Discitur.Domain.Messages.Events;
 using Discitur.Infrastructure;
 using Discitur.Infrastructure.Events.Versioning;
+using Discitur.Infrastructure.Sagas;
 using NEventStore;
 using NEventStore.Conversion;
 using NEventStore.Dispatcher;
 using NEventStore.Persistence.Sql.SqlDialects;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
-using System.Web;
 
 namespace Discitur.Api.Injection.Installers
 {
@@ -87,6 +85,8 @@ namespace Discitur.Api.Injection.Installers
             container.Register(
                 Component.For<IStoreEvents>().Instance(_store),
                 Component.For<IRepository>().ImplementedBy<EventStoreRepository>().LifeStyle.Transient,
+                Component.For<ISagaRepository>().ImplementedBy<SagaEventStoreRepository>().LifeStyle.Transient,
+                Component.For<ISagaIdStore>().ImplementedBy<InMemorySagaIdStore>().LifeStyle.Transient,
                 Component.For<IConstructAggregates>().ImplementedBy<AggregateFactory>().LifeStyle.Transient,
                 Component.For<IDetectConflicts>().ImplementedBy<ConflictDetector>().LifeStyle.Transient);
 

@@ -18,12 +18,15 @@ namespace Discitur.Domain.Model
         public string UserName { get; private set; }
         public byte[] Picture { get; private set; }
         public bool IsActivated { get; private set; }
+        public int ReputationScore { get; private set; }
+        public IList<Badge> Badges { get; private set; }
 
         #region Constructors and Factories
         //constructor with only id parameter for EventStore
         private User(Guid UserId)
         {
             Id = UserId;
+            Badges = new List<Badge>();
         }
 
         //constructor with IMemento parameter for EventStore Snapshooting
@@ -37,6 +40,8 @@ namespace Discitur.Domain.Model
             UserName = mementoItem.UserName;
             Picture = mementoItem.Picture;
             IsActivated = mementoItem.IsActivated;
+            ReputationScore = mementoItem.ReputationScore;
+            Badges = mementoItem.Badges;
         }
 
         public User(Guid id, string name, string surname, string email, string userName)
@@ -47,6 +52,7 @@ namespace Discitur.Domain.Model
             Email = email;
             UserName = userName;
             IsActivated = false;
+            Badges = new List<Badge>();
             // Raise Registration Event
             RegisterUser(id, name, surname, email, userName);
         }
@@ -109,7 +115,24 @@ namespace Discitur.Domain.Model
             Picture = @event.Picture;
         }
         #endregion
-        
+
+
+        #region Achieve "Affecionated Badge"
+        public void AchieveAffecionatedBadge(DateTime date)
+        {
+            RaiseEvent(new AchievedAffecionatedUserBadgeEvent(Id, date));
+        }
+
+        void Apply(AchievedAffecionatedUserBadgeEvent @event)
+        {
+            Badges.Add(new Badge()
+            {
+                Code = 1,
+                Description = "Affectionated User",
+                AchievedDate = @event.Date
+            });
+        }
+        #endregion        
     }
 
 
@@ -123,8 +146,10 @@ namespace Discitur.Domain.Model
         public string UserName { get; set; }
         public byte[] Picture { get; set; }
         public bool IsActivated { get; private set; }
+        public int ReputationScore { get; private set; }
+        public IList<Badge> Badges { get; private set; }
 
-        public UserMemento(Guid id, int version, string name, string surname, string email, string userName, byte[] picture, /*string thumb,*/ bool isActivated)
+        public UserMemento(Guid id, int version, string name, string surname, string email, string userName, byte[] picture, bool isActivated)
         {
             Id = id;
             Version = version;
@@ -134,6 +159,17 @@ namespace Discitur.Domain.Model
             UserName = userName;
             Picture = picture;
             IsActivated = isActivated;
+            ReputationScore = 0;
+            Badges = new List<Badge>();
         }
     }
+    
+    public class Badge
+    {
+        public int Code { get; set; }
+        public string Description { get; set; }
+        public DateTime AchievedDate { get; set; }
+    }
+
+
 }

@@ -1,5 +1,6 @@
 ﻿using Discitur.CommandStack.ViewModel;
 using Discitur.Infrastructure.Api;
+using System;
 
 namespace Discitur.CommandStack.Worker
 {
@@ -9,5 +10,6 @@ namespace Discitur.CommandStack.Worker
         void ActivateUser(ActivateUserViewModel model);
         void ChangeUserEmail(ChangeUserEmailViewModel model);
         void ChangeUserPicture(ChangeUserPictureViewModel model);
+        void LogInUser(int _userId, DateTime date);
     }
 }

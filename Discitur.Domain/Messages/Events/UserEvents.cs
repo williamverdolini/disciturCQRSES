@@ -59,6 +59,18 @@ namespace Discitur.Domain.Messages.Events
         }
     }
 
+    [VersionedEvent("LoggedInUserEvent", 0)]
+    public class LoggedInUserEvent : Event
+    {
+        public DateTime Date { get; private set; }
+
+        public LoggedInUserEvent(Guid id, DateTime date)
+        {
+            Id = id;
+            Date = date;
+        }
+    }
+
     [VersionedEvent("UserMementoPropagatedEvent", 0)]
     public class UserMementoPropagatedEvent : Event
     {
@@ -70,4 +82,16 @@ namespace Discitur.Domain.Messages.Events
         }
 
     }
+
+    [VersionedEvent("AchievedAffecionatedUserBadgeEvent", 0)]
+    public class AchievedAffecionatedUserBadgeEvent : Event
+    {
+        public DateTime Date { get; private set; }
+
+        public AchievedAffecionatedUserBadgeEvent(Guid id, DateTime date)
+        {
+            Id = id;
+            Date = date;
+        }
+    }    
 }

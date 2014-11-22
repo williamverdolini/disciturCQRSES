@@ -1,5 +1,6 @@
 ﻿using CommonDomain.Persistence;
 using Discitur.Domain.Messages.Commands;
+using Discitur.Domain.Messages.Events;
 using Discitur.Domain.Model;
 using Discitur.Infrastructure;
 using Discitur.Infrastructure.Commands;
@@ -12,7 +13,8 @@ namespace Discitur.CommandStack.Logic.CommandHandlers
         ICommandHandler<RegisterUserCommand>,
         ICommandHandler<ActivateUserCommand>,
         ICommandHandler<ChangeUserEmailCommand>,
-        ICommandHandler<ChangeUserPictureCommand>
+        ICommandHandler<ChangeUserPictureCommand>,
+        ICommandHandler<LogInUserCommand>
     {
         // Repository to get/save Aggregates/Entities from/to Domain Model
         private readonly IRepository repo;
@@ -55,6 +57,20 @@ namespace Discitur.CommandStack.Logic.CommandHandlers
             User user = repo.GetById<User>(command.Id);
             user.ChangePicture(command.Picture);
             repo.Save(user, Guid.NewGuid());
+        }
+
+        public void Handle(LogInUserCommand command)
+        {
+            User user = repo.GetById<User>(command.Id);
+            //using (var stream = store.OpenStream(user.Id, 0, int.MaxValue))
+            using (var stream = store.OpenStream(Guid.NewGuid(), 0, int.MaxValue))
+            {
+                // Extra-Domain Event
+                var @event = new LoggedInUserEvent(user.Id, command.Date);
+                //stream.UncommittedHeaders[AggregateTypeHeader] = mementoType.FullName.Replace("Memento", "");
+                stream.Add(new EventMessage { Body = @event });
+                stream.CommitChanges(Guid.NewGuid());
+            }
         }
     }
 }
