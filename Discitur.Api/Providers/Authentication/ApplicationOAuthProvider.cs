@@ -1,6 +1,8 @@
-﻿using Discitur.Infrastructure;
+﻿using Discitur.CommandStack.Worker;
+using Discitur.Infrastructure;
 using Discitur.QueryStack;
 using Discitur.QueryStack.Model;
+using Discitur.QueryStack.Worker;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
 using Microsoft.Owin.Security;
@@ -20,15 +22,21 @@ namespace Discitur.Api.Providers.Authentication
     {
         private readonly string _publicClientId;
         private readonly Func<UserManager<IdentityUser>> _userManagerFactory;
+        // Worker Services
+        private readonly IUserQueryWorker QueryWorker;
+        private readonly IUserCommandWorker CommandWorker;
         //private DisciturContext db = new DisciturContext();
 
-
-        public ApplicationOAuthProvider(string publicClientId, Func<UserManager<IdentityUser>> userManagerFactory)
+        public ApplicationOAuthProvider(string publicClientId, Func<UserManager<IdentityUser>> userManagerFactory, IUserQueryWorker queryWorker, IUserCommandWorker commandWorker)
         {
             Contract.Requires<ArgumentNullException>(publicClientId != null, "publicClientId");
             Contract.Requires<ArgumentNullException>(userManagerFactory != null, "userManagerFactory");
+            Contract.Requires<System.ArgumentNullException>(queryWorker != null, "queryWorker");
+            Contract.Requires<System.ArgumentNullException>(commandWorker != null, "commandWorker");
             _publicClientId = publicClientId;
             _userManagerFactory = userManagerFactory;
+            QueryWorker = queryWorker;
+            CommandWorker = commandWorker;
         }
 
         //[Mag14.Controllers.AccountController.JsonResultWebApiFilter]
@@ -61,6 +69,14 @@ namespace Discitur.Api.Providers.Authentication
                 AuthenticationTicket ticket = new AuthenticationTicket(oAuthIdentity, properties);
                 context.Validated(ticket);
                 context.Request.Context.Authentication.SignIn(cookiesIdentity);
+
+                try
+                {
+                    User _user = await QueryWorker.GetUserByUserName(user.UserName);
+                    CommandWorker.LogInUser(_user.UserId, DateTime.Now);
+                }
+                // TODO: gestire l'eccezione di validazione (per loginripetute ello stesso giorno
+                catch (Exception) { }
             }
         }
 

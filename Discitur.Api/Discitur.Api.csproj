@@ -223,9 +223,6 @@
     <Compile Include="Controllers\SEOLessonController.cs" />
     <Compile Include="Controllers\UserController.cs" />
     <Compile Include="Filters\ValidationModelActionFilter.cs" />
-    <Compile Include="Global.asax.cs">
-      <DependentUpon>Global.asax</DependentUpon>
-    </Compile>
     <Compile Include="Injection\Installers\CommandStackInstaller.cs" />
     <Compile Include="Injection\Installers\ControllersInstaller.cs" />
     <Compile Include="Injection\Installers\EventStoreInstaller.cs" />
@@ -244,7 +241,6 @@
     <Compile Include="Startup.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Global.asax" />
     <Content Include="Providers\MailTemplates\Activation.html" />
     <Content Include="Providers\MailTemplates\ForgottenPwd.html" />
     <Content Include="Web.config">

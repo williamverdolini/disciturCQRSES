@@ -1,4 +1,9 @@
-﻿using Discitur.Api.Providers.Authentication;
+﻿using Castle.Windsor;
+using Discitur.Api.Injection.Installers;
+using Discitur.Api.Injection.WebAPI;
+using Discitur.Api.Providers.Authentication;
+using Discitur.CommandStack.Worker;
+using Discitur.QueryStack.Worker;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
 using Microsoft.Owin;
@@ -10,6 +15,10 @@ using System;
 using System.Configuration;
 using System.Threading.Tasks;
 using System.Web.Cors;
+using System.Web.Http;
+using System.Web.Http.Dispatcher;
+using System.Web.Mvc;
+using System.Web.Routing;
 
 namespace Discitur.Api
 {
@@ -18,8 +27,20 @@ namespace Discitur.Api
         //public const string ExternalCookieAuthenticationType = CookieAuthenticationDefaults.ExternalAuthenticationType;
         public const string ExternalOAuthAuthenticationType = "ExternalToken";
 
-        static Startup()
+        private readonly IWindsorContainer container;
+
+        public Startup()
         {
+            this.container = new WindsorContainer()
+                            .Install(
+                                    new CommandStackInstaller(),
+                                    new QueryStackInstaller(),
+                                    new EventStoreInstaller(),
+                                    new ControllersInstaller(),
+                                    new LegacyMigrationInstaller()
+                                    );
+
+
             PublicClientId = "self";
 
             UserManagerFactory = () => new UserManager<IdentityUser>(new UserStore<IdentityUser>());
@@ -40,7 +61,11 @@ namespace Discitur.Api
             OAuthOptions = new OAuthAuthorizationServerOptions
             {
                 TokenEndpointPath = new PathString("/api/Token"),
-                Provider = new ApplicationOAuthProvider(PublicClientId, UserManagerFactory),
+                Provider = new ApplicationOAuthProvider(
+                    PublicClientId, 
+                    UserManagerFactory, 
+                    container.Resolve<IUserQueryWorker>(), 
+                    container.Resolve<IUserCommandWorker>()),
                 AuthorizeEndpointPath = new PathString("/api/Account/ExternalLogin"),
                 AccessTokenExpireTimeSpan = TimeSpan.FromDays(14),
                 AllowInsecureHttp = true
@@ -61,6 +86,20 @@ namespace Discitur.Api
         // For more information on configuring authentication, please visit http://go.microsoft.com/fwlink/?LinkId=301864
         public void ConfigureAuth(IAppBuilder app)
         {
+            AreaRegistration.RegisterAllAreas();
+
+            GlobalConfiguration.Configure(WebApiConfig.Register);
+            //WebApiConfig.Register(GlobalConfiguration.Configuration);
+            FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
+            RouteConfig.RegisterRoutes(RouteTable.Routes);
+            //BundleConfig.RegisterBundles(BundleTable.Bundles);
+
+            //Database.SetInitializer<DisciturContext>(null);
+
+            GlobalConfiguration.Configuration.Services.Replace(
+                typeof(IHttpControllerActivator),
+                new WindsorCompositionRoot(this.container));
+
             //app.UseCors(Microsoft.Owin.Cors.CorsOptions.AllowAll);
 
             bool isCorsEnabled = Convert.ToBoolean(ConfigurationManager.AppSettings["CORSEnabled"]);
@@ -100,6 +139,9 @@ namespace Discitur.Api
             //    appSecret: "");
 
             //app.UseGoogleAuthentication();
+
+            //http://bitoftech.net/2014/06/01/token-based-authentication-asp-net-web-api-2-owin-asp-net-identity/
+            //https://stackoverflow.com/questions/25997592/dependency-injection-using-simpleinjector-and-oauthauthorizationserverprovider/26034641#26034641
         }
     }
 
